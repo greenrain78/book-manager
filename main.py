@@ -1,7 +1,7 @@
 import logging
 
 from src.context import AppContext
-from src.prompt.start import date_input_prompt
+from src.prompt.start import date_input_prompt, main_prompt
 
 logging.basicConfig(
     level=logging.DEBUG,                       # 로그 레벨 (DEBUG 이상 기록)
@@ -19,6 +19,5 @@ if __name__ == '__main__':
     # 날짜 입력
     date_input_prompt(app=app)
     # 무결성 검사
-
-    print(f"현재 날짜: {app.current_date}")
-    log.debug(f"현재 날짜: {app.current_date}")
+    # main_prompt(app=app)
+    log.debug(f"==================== 프로그램 종료 ====================")
