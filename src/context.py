@@ -2,6 +2,7 @@
 
 class AppContext:
     def __init__(self):
+        self.current_date = None
         self.current_user = None
 
 
@@ -17,3 +18,6 @@ class AppContext:
 
     def logout(self):
         self.current_user = None
+
+    def set_current_date(self, now_date):
+        self.current_date = now_date

@@ -1,6 +1,7 @@
 import os
 
 from src.context import AppContext
+from src.vaild.basic import is_valid_date_format
 
 
 def clear_screen():
@@ -32,6 +33,28 @@ def main_menu(app: AppContext):
                 input("잘못된 입력입니다. 엔터를 눌러 계속...")
         else:
             home_screen(app)
+
+
+def date_input_screen(app: AppContext):
+    while True:
+        clear_screen()
+        date_str = input("날짜를 입력하세요 (YYYY-MM-DD) 또는 'q'로 종료: ").strip()
+
+        is_valid_date_format
+
+        
+        if date_str.lower() == 'q':
+            break
+        try:
+            year, month, day = map(int, date_str.split('-'))
+            if 1 <= month <= 12 and 1 <= day <= 31:
+                print(f"입력된 날짜: {year}년 {month}월 {day}일")
+                input("엔터를 눌러 계속...")
+                break
+            else:
+                input("잘못된 날짜입니다. 엔터를 눌러 다시 시도...")
+        except ValueError:
+            input("잘못된 형식입니다. 엔터를 눌러 다시 시도...")
 
 def login_screen(app: AppContext):
     clear_screen()

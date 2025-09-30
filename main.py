@@ -1,8 +1,24 @@
+import logging
+
 from src.context import AppContext
-from src.screen import main_menu
+from src.prompt.start import date_input_prompt
+
+logging.basicConfig(
+    level=logging.DEBUG,                       # 로그 레벨 (DEBUG 이상 기록)
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",               # 시간 포맷
+    handlers=[
+        logging.FileHandler("debug.log", encoding="utf-8"),  # 파일 기록
+    ]
+)
+log = logging.getLogger(__name__)
 
 if __name__ == '__main__':
-    # 날짜 입력
-    # 무결성 검사
+    log.debug(f"==================== 프로그램 시작 ====================")
     app = AppContext()
-    main_menu(app=app)
+    # 날짜 입력
+    date_input_prompt(app=app)
+    # 무결성 검사
+
+    print(f"현재 날짜: {app.current_date}")
+    log.debug(f"현재 날짜: {app.current_date}")
