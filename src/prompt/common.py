@@ -1,8 +1,6 @@
 import os
 
 
-def clear_prompt():
-    os.system('cls')
 
 
 # y N 입력 프롬프트
