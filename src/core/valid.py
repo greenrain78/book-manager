@@ -1,6 +1,5 @@
 from logging import getLogger
-from optparse import Option
-from typing import Callable, Optional, Any
+from typing import Callable, Any
 
 log = getLogger(__name__)
 

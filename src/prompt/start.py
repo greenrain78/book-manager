@@ -32,10 +32,13 @@ def date_input_prompt(app: AppContext) -> None:
                 (is_previous_date, "이전 날짜를 입력했습니다!! 올바른 날짜를 입력하세요.")
             ]
         )
-        # 날짜 등록
-        app.set_current_date(now_date)
-        log.debug(f"현재 날짜 설정: {now_date}")
-        break
+        if now_date is not None:
+            log.debug(f"유효한 날짜 입력: {now_date}")
+            break
+
+    # 날짜 등록
+    app.set_current_date(now_date)
+    log.debug(f"현재 날짜 설정: {now_date}")
     return None
 
 

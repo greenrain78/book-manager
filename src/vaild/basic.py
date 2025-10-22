@@ -12,4 +12,4 @@ def is_valid_date_format(date_str: str) -> bool:
 def is_previous_date(input_date) -> bool:
     """Check if the input date is before the current date."""
     #todo 현재 날짜와 비교하는 로직 추가
-    return False
+    return True
