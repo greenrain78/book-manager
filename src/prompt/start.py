@@ -48,12 +48,13 @@ def main_prompt(app: AppContext) -> None:
     :param app:
     :return:
     """
-    print(f"Main")
-    print(f"1. 회원가입")
-    print(f"2. 로그인")
-    print(f"3. 종료")
+
     while True:
         try:
+            print(f"Main")
+            print(f"1. 회원가입")
+            print(f"2. 로그인")
+            print(f"3. 종료")
             choice = input("명령어를 입력하세요: ").strip()
             if choice == '1':
                 print("회원가입 선택")
@@ -113,7 +114,7 @@ def signup_prompt(app: AppContext) -> None:
         )
         if email:
             break
-    log.debug(f"이메일 입력: {email}")
+    log.debug(f"사용 가능한 이메일 입력: {email}")
     log.info(f"회원가입 완료: ID={user_id}, PWD={password}, EMAIL={email}")
     return None
 
