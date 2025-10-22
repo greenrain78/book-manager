@@ -1,2 +1,3 @@
-korea|1234|abc@naver.com|
-korea2|12342|abc@naver.com2|
+user01|pass1234|user01@naver.com
+alpha99|Abc12345@|alpha99@gmail.com
+booklover|LoveBooks1!|booklover@kku.com
