@@ -73,6 +73,11 @@ def main_prompt(app: AppContext) -> None:
     return None
 
 def signup_prompt(app: AppContext) -> None:
+
+    # 회원가입 레코드 갯수 제한 검사
+    if len(app.users.data) > 20:
+        app.exit_with_error(f"ID갯수가 총 20개를 초과하였습니다!! 다음에 이용해주세요^^")
+
     # ID 입력 및 유효성 검사
     while True:
         user_id = input_with_validation(
@@ -86,10 +91,6 @@ def signup_prompt(app: AppContext) -> None:
         if user_id:
             break
     log.debug(f"사용 가능한 ID 입력: {user_id}")
-
-    #todo ID갯수가 총 20개를 초과하였습니다!! 다음에 이용해주세요^^
-    # 비정상 결과 2: 회원가입 시 레코드 갯수 제한에 위배되면 그에 상응하는 오류 메시지를 출력하고 시스템을 종료합니다.
-    # app.exit_with_error(f"회원가입 시 레코드 갯수 제한에 위배되었습니다!! 다음에 이용해주세요^^")
 
     # 비밀번호 입력 및 유효성 검사
     while True:

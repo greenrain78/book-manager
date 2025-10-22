@@ -26,7 +26,7 @@ class AppContext:
         self.current_date = now_date
 
     @staticmethod
-    def exit_with_error(self, msg):
+    def exit_with_error(msg):
         print(msg)
         input("Press Enter to continue...") # 사용자에게 메시지를 읽을 시간을 줌
         raise SystemExit
