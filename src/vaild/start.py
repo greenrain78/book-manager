@@ -1,5 +1,7 @@
 import re
 
+from src.context import AppContext
+
 
 def is_valid_user_id(user_id: str) -> bool:
     """
@@ -31,8 +33,11 @@ def is_valid_user_id(user_id: str) -> bool:
     #         return False
     return True # 통과
 
-def is_available_user_id(user_id: str) -> bool:
+def is_available_user_id(user_id: str, app: AppContext) -> bool:
     #todo 실제 DB나 데이터 구조에서 중복 검사 로직 구현 필요
+    for u in app.users.data:
+        if u.user_id == user_id:
+            return False # 이미 존재하는 ID
     return True
 
 def is_reserved_user_id(user_id: str) -> bool:

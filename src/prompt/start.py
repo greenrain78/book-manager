@@ -62,6 +62,7 @@ def main_prompt(app: AppContext) -> None:
                 signup_prompt(app=app)
             elif choice == '2':
                 print("로그인 선택")
+                login_prompt(app=app)
             elif choice == '3':
                 print("종료 선택")
                 break
@@ -123,32 +124,36 @@ def signup_prompt(app: AppContext) -> None:
     return None
 
 def login_prompt(app: AppContext) -> None:
+
+    #todo 관리자 로그인 분기 처리 필요
+
     while True:
         user_id = input_with_validation(
             "ID를 입력하세요: ",
             [
                 (is_valid_user_id, "잘못된 ID입니다."),
-                (lambda v: not is_available_user_id(v), "존재하지 않는 ID입니다."),
+                (lambda v: not is_available_user_id(user_id=v, app=app), "존재하지 않는 ID입니다."),
             ]
         )
-
-        # user_id = input("ID를 입력하세요: ").strip()
-        # if not is_valid_user_id(user_id=user_id):
-        #     log.debug(f"잘못된 ID 입력: {user_id}")
-        #     continue
-        # if is_available_user_id(user_id=user_id):
-        #     print(f"존재하지 않는 ID입니다!! ID를 다시 입력하세요.")
-        #     log.debug(f"존재하지 않는 ID 입력: {user_id}")
-        #     continue
-        # else:
-        #     log.debug(f"존재하는 ID 입력: {user_id}")
-        #     break
-
-    while True:
-        password = input("pwd를 입력하세요 :").strip()
-        if is_valid_password(password=password):
-            log.debug(f"사용 가능한 pwd 입력: {password}")
+        if user_id:
             break
+    log.debug(f"사용 가능한 ID 입력: {user_id}")
+    user = next((u for u in app.users.data if u.user_id == user_id), None) # 사용자 정보 조회
+
+    # 비밀번호 입력 및 유효성 검사
+    while True:
+        password = input_with_validation(
+            "pwd를 입력하세요 :",
+            [
+                (is_valid_password, "잘못된 형식입니다!!  pw를 다시 입력하세요."),
+                (lambda v: user.pw == v, "ID와 일치하는 pw가 아닙니다!!  pw를 다시 입력하세요."),
+            ]
+        )
+        if password:
+            break
+    log.debug(f"사용 가능한 pwd 입력: {password}")
+    # main으로 이동함
+    print(f"로그인 성공! 환영합니다, {user_id}님.")
     return None
 
 
