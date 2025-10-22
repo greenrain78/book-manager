@@ -19,6 +19,7 @@ class AppContext:
     def set_current_date(self, now_date):
         self.current_date = now_date
 
+    @staticmethod
     def exit_with_error(self, msg):
         print(msg)
         input("Press Enter to continue...") # 사용자에게 메시지를 읽을 시간을 줌

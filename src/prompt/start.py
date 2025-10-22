@@ -5,7 +5,7 @@ from src.context import AppContext
 from src.core.valid import input_with_validation, parse_with_validation
 from src.vaild.basic import is_valid_date_format, is_previous_date
 from src.vaild.start import is_valid_user_id, is_valid_password, is_valid_email, is_available_user_id, \
-    is_reserved_user_id
+    is_reserved_user_id, is_not_same_as_id
 
 log = getLogger(__name__)
 
@@ -82,33 +82,39 @@ def signup_prompt(app: AppContext) -> None:
                 (lambda v: is_reserved_user_id(v), "잘못된 ID입니다!! 다른 ID를 입력하세요.")
             ]
         )
-        log.debug(f"사용 가능한 ID 입력: {user_id}")
-        break
+        if user_id:
+            break
+    log.debug(f"사용 가능한 ID 입력: {user_id}")
 
     #todo ID갯수가 총 20개를 초과하였습니다!! 다음에 이용해주세요^^
     # 비정상 결과 2: 회원가입 시 레코드 갯수 제한에 위배되면 그에 상응하는 오류 메시지를 출력하고 시스템을 종료합니다.
-    app.exit_with_error(f"회원가입 시 레코드 갯수 제한에 위배되었습니다!! 다음에 이용해주세요^^")
-    return None
+    # app.exit_with_error(f"회원가입 시 레코드 갯수 제한에 위배되었습니다!! 다음에 이용해주세요^^")
+
     # 비밀번호 입력 및 유효성 검사
     while True:
-        password = input("pwd를 입력하세요 :").strip()
-        if is_valid_password(password=password):
-            log.debug(f"사용 가능한 pwd 입력: {password}")
+        password = input_with_validation(
+            "pwd를 입력하세요 :",
+            [
+                (lambda v: is_valid_password(v), "패스워드는 8자리 이상이어야 합니다!! 다른 pw를 입력하세요."),
+                (lambda v: is_not_same_as_id(user_id=user_id, password=v), "pw는 ID와 동일할 수 없습니다!! 다른 pw를 입력하세요."),
+            ]
+        )
+        if password:
             break
-        else:
-            log.debug(f"잘못된 pwd 입력: {password}")
+    log.debug(f"사용 가능한 pwd 입력: {password}")
 
     # 이메일 입력 및 유효성 검사
     while True:
-        email = input("이메일을 입력하세요 :").strip()
-        if is_valid_email(email=email):
-            log.debug(f"이메일 입력: {email}")
+        email = input_with_validation(
+            "이메일을 입력하세요 :",
+            [
+                (is_valid_email, "이메일 형식은 xxx@yyy.com 형식입니다!! 형식에 맞게 입력하세요."),
+            ]
+        )
+        if email:
             break
-        else:
-            log.debug(f"잘못된 이메일 입력: {email}")
+    log.debug(f"이메일 입력: {email}")
     log.info(f"회원가입 완료: ID={user_id}, PWD={password}, EMAIL={email}")
-    # 회원 가입 완료 후 로그인 프롬프트 이동
-    login_prompt(app=app)
     return None
 
 def login_prompt(app: AppContext) -> None:
@@ -139,3 +145,29 @@ def login_prompt(app: AppContext) -> None:
             log.debug(f"사용 가능한 pwd 입력: {password}")
             break
     return None
+
+
+
+
+
+
+        # password = input("pwd를 입력하세요 :").strip()
+        # if is_valid_password(password=password):
+        #     log.debug(f"사용 가능한 pwd 입력: {password}")
+        #     break
+        # else:
+        #     log.debug(f"잘못된 pwd 입력: {password}")
+
+
+    # # 이메일 입력 및 유효성 검사
+    # while True:
+    #     email = input("이메일을 입력하세요 :").strip()
+    #     if is_valid_email(email=email):
+    #         log.debug(f"이메일 입력: {email}")
+    #         break
+    #     else:
+    #         log.debug(f"잘못된 이메일 입력: {email}")
+    # log.info(f"회원가입 완료: ID={user_id}, PWD={password}, EMAIL={email}")
+    # # 회원 가입 완료 후 로그인 프롬프트 이동
+    # login_prompt(app=app)
+    # return None

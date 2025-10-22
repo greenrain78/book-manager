@@ -54,19 +54,41 @@ def is_reserved_user_id(user_id: str) -> bool:
 def is_valid_password(password: str) -> bool:
     """
     비밀번호 유효성 검사
-    - 영문자, 숫자, 특수문자 포함 8자리 이상이어야 합니다.
+    - 문자열 길이가 8자 이상
+    - 허용 문자: 로마자 대/소문자, 숫자(0-9), 특수문자
+    - 사용 가능한 특수문자: !, @, #, $, % ->
+    - 공백류는 어디에도 포함 불가
+    - 예를 들어, “pass1234”, “passpass”, “12341234” 모두  문법적으로 올바른 PW입니다.
     :param password:
     :return:
     """
-    #todo : 정규식으로 검사
+    # 정규식으로 검사
+    pattern = re.compile(r'^[A-Za-z0-9!@#$%]{8,}$')
+    if not pattern.match(password):
+        return False
     return True
+
+def is_not_same_as_id(user_id: str, password: str) -> bool:
+    """
+    비밀번호가 ID와 동일하지 않은지 검사
+    :param user_id:
+    :param password:
+    :return:
+    """
+    return user_id != password
 
 def is_valid_email(email: str) -> bool:
     """
     이메일 유효성 검사
-    - 기본적인 형식 검사
+    - 문자열 길이가 50자 이하
+    - xxx@yyy.com  형태의 이메일 주소만 허용함
+    - @ 앞 뒤의 “xxx”, “yyy”안에는 로마자 대/소문자, 숫자(0-9)의 조합만 허용
+    - 공백류는 어디에도 포함 불가
     :param email:
     :return:
     """
-    #todo : 정규식으로 검사
+    # 정규식으로 검사
+    pattern = re.compile(r'^[A-Za-z0-9]+@[A-Za-z0-9]+\.com$')
+    if not pattern.match(email):
+        return False
     return True
