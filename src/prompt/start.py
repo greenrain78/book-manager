@@ -87,7 +87,7 @@ def signup_prompt(app: AppContext) -> None:
 
     #todo ID갯수가 총 20개를 초과하였습니다!! 다음에 이용해주세요^^
     # 비정상 결과 2: 회원가입 시 레코드 갯수 제한에 위배되면 그에 상응하는 오류 메시지를 출력하고 시스템을 종료합니다.
-    app.error_msg = "회원가입 시 레코드 갯수 제한에 위배되었습니다!! 다음에 이용해주세요^^"
+    app.exit_with_error(f"회원가입 시 레코드 갯수 제한에 위배되었습니다!! 다음에 이용해주세요^^")
     return None
     # 비밀번호 입력 및 유효성 검사
     while True:
