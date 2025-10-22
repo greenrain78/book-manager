@@ -32,6 +32,7 @@ def is_valid_user_id(user_id: str) -> bool:
     return True # 통과
 
 def is_available_user_id(user_id: str) -> bool:
+    #todo 실제 DB나 데이터 구조에서 중복 검사 로직 구현 필요
     return True
 
 def is_reserved_user_id(user_id: str) -> bool:

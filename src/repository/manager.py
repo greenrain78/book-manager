@@ -11,7 +11,7 @@ class BaseRepository:
         self.path = path
         self.expected_fields = expected_fields
         self.factory_from_fields = factory_from_fields
-        self.data: List[Dict[str, str]] = []
+        self.data = []
 
         # 데이터 로드
         self.load_all()
@@ -47,6 +47,10 @@ class BaseRepository:
 class UsersRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=3, factory_from_fields=User.from_fields)
+
+    def insert(self, user: User) -> None:
+        self.data.append(user)
+        self.save_all()
 
 class BooksRepository(BaseRepository):
     def __init__(self, path: str):

@@ -3,6 +3,7 @@ from logging import getLogger
 
 from src.context import AppContext
 from src.core.valid import input_with_validation, parse_with_validation
+from src.repository.entity import User
 from src.vaild.basic import is_valid_date_format, is_previous_date
 from src.vaild.start import is_valid_user_id, is_valid_password, is_valid_email, is_available_user_id, \
     is_reserved_user_id, is_not_same_as_id
@@ -83,9 +84,9 @@ def signup_prompt(app: AppContext) -> None:
         user_id = input_with_validation(
             "ID를 입력하세요: ",
             [
-                (lambda v: is_valid_user_id(v), "ID가 4자리 이상이어야 합니다!!  다른 ID를 입력하세요."),
-                (lambda v: is_available_user_id(v), "이미 존재하는 ID입니다!!  다른 ID를 입력하세요."),
-                (lambda v: is_reserved_user_id(v), "잘못된 ID입니다!! 다른 ID를 입력하세요.")
+                (is_valid_user_id, "ID가 4자리 이상이어야 합니다!!  다른 ID를 입력하세요."),
+                (is_available_user_id, "이미 존재하는 ID입니다!!  다른 ID를 입력하세요."),
+                (is_reserved_user_id, "잘못된 ID입니다!! 다른 ID를 입력하세요.")
             ]
         )
         if user_id:
@@ -97,7 +98,7 @@ def signup_prompt(app: AppContext) -> None:
         password = input_with_validation(
             "pwd를 입력하세요 :",
             [
-                (lambda v: is_valid_password(v), "패스워드는 8자리 이상이어야 합니다!! 다른 pw를 입력하세요."),
+                (is_valid_password, "패스워드는 8자리 이상이어야 합니다!! 다른 pw를 입력하세요."),
                 (lambda v: is_not_same_as_id(user_id=user_id, password=v), "pw는 ID와 동일할 수 없습니다!! 다른 pw를 입력하세요."),
             ]
         )
@@ -117,6 +118,8 @@ def signup_prompt(app: AppContext) -> None:
             break
     log.debug(f"사용 가능한 이메일 입력: {email}")
     log.info(f"회원가입 완료: ID={user_id}, PWD={password}, EMAIL={email}")
+
+    app.users.insert(User(user_id=user_id, pw=password, email=email))
     return None
 
 def login_prompt(app: AppContext) -> None:
