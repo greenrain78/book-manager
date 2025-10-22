@@ -19,5 +19,5 @@ if __name__ == '__main__':
     # 날짜 입력
     date_input_prompt(app=app)
     # 무결성 검사
-    # main_prompt(app=app)
+    main_prompt(app=app)
     log.debug(f"==================== 프로그램 종료 ====================")

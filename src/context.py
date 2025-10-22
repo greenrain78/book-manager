@@ -4,6 +4,7 @@ class AppContext:
     def __init__(self):
         self.current_date = None
         self.current_user = None
+        self.error_msg = None
 
 
 

@@ -4,7 +4,8 @@ from logging import getLogger
 from src.context import AppContext
 from src.core.valid import input_with_validation, parse_with_validation
 from src.vaild.basic import is_valid_date_format, is_previous_date
-from src.vaild.start import is_valid_user_id, is_valid_password, is_valid_email, is_available_user_id
+from src.vaild.start import is_valid_user_id, is_valid_password, is_valid_email, is_available_user_id, \
+    is_reserved_user_id
 
 log = getLogger(__name__)
 
@@ -49,34 +50,42 @@ def main_prompt(app: AppContext) -> None:
     print(f"2. 로그인")
     print(f"3. 종료")
     while True:
-        choice = input("명령어를 입력하세요: ").strip()
-        if choice == '1':
-            print("회원가입 선택")
-            signup_prompt(app=app)
-        elif choice == '2':
-            print("로그인 선택")
-        elif choice == '3':
-            print("종료 선택")
-            break
-        else:
-            print("잘못된 입력입니다!! 1,2,3 중 하나를 입력하세요.")
+        try:
+            choice = input("명령어를 입력하세요: ").strip()
+            if choice == '1':
+                print("회원가입 선택")
+                signup_prompt(app=app)
+            elif choice == '2':
+                print("로그인 선택")
+            elif choice == '3':
+                print("종료 선택")
+                break
+            else:
+                print("잘못된 입력입니다!! 1,2,3 중 하나를 입력하세요.")
+        except Exception as e:
+            log.error(f"메인 프롬프트 오류: {e}")
+            print("오류가 발생했습니다!! 다시 시도하세요.")
     log.info(f"Main prompt 종료")
     return None
 
 def signup_prompt(app: AppContext) -> None:
-
     # ID 입력 및 유효성 검사
     while True:
-        user_id = input("ID를 입력하세요: ").strip()
-        if not is_valid_user_id(user_id=user_id):
-            log.debug(f"잘못된 ID 입력: {user_id}")
-            continue
-        if is_available_user_id(user_id=user_id):
-            log.debug(f"사용 가능한 ID 입력: {user_id}")
-            break
-        else:
-            log.debug(f"이미 사용중인 ID 입력: {user_id}")
+        user_id = input_with_validation(
+            "ID를 입력하세요: ",
+            [
+                (lambda v: is_valid_user_id(v), "ID가 4자리 이상이어야 합니다!!  다른 ID를 입력하세요."),
+                (lambda v: is_available_user_id(v), "이미 존재하는 ID입니다!!  다른 ID를 입력하세요."),
+                (lambda v: is_reserved_user_id(v), "잘못된 ID입니다!! 다른 ID를 입력하세요.")
+            ]
+        )
+        log.debug(f"사용 가능한 ID 입력: {user_id}")
+        break
 
+    #todo ID갯수가 총 20개를 초과하였습니다!! 다음에 이용해주세요^^
+    # 비정상 결과 2: 회원가입 시 레코드 갯수 제한에 위배되면 그에 상응하는 오류 메시지를 출력하고 시스템을 종료합니다.
+    app.error_msg = "회원가입 시 레코드 갯수 제한에 위배되었습니다!! 다음에 이용해주세요^^"
+    return None
     # 비밀번호 입력 및 유효성 검사
     while True:
         password = input("pwd를 입력하세요 :").strip()
