@@ -1,7 +1,11 @@
+from datetime import timedelta
+
 from src.repository.manager import UsersRepository, BooksRepository, BorrowHistoryRepository, BorrowRepository
 
 
 class AppContext:
+    borrow_period = timedelta(days=7) # 대출 기간: 7일
+
     def __init__(self):
         self.current_date = None
         self.current_user = None

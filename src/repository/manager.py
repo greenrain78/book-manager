@@ -56,10 +56,22 @@ class BooksRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=3, factory_from_fields=Book.from_fields)
 
+    def insert(self, book: Book) -> None:
+        self.data.append(book)
+        self.save_all()
+
 class BorrowRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=4, factory_from_fields=Borrow.from_fields)
 
+    def insert(self, borrow: Borrow) -> None:
+        self.data.append(borrow)
+        self.save_all()
+
 class BorrowHistoryRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=5, factory_from_fields=BorrowHistory.from_fields)
+
+    def insert(self, borrow_history: BorrowHistory) -> None:
+        self.data.append(borrow_history)
+        self.save_all()
