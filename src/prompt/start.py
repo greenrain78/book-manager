@@ -3,6 +3,7 @@ from logging import getLogger
 
 from src.context import AppContext
 from src.core.valid import input_with_validation, parse_with_validation
+from src.prompt.admin import admin_prompt
 from src.prompt.user import user_prompt
 from src.repository.entity import User
 from src.vaild.basic import is_valid_date_format, is_previous_date
@@ -64,8 +65,6 @@ def main_prompt(app: AppContext) -> None:
             elif choice == '2':
                 print("로그인 선택")
                 login_prompt(app=app)
-                user_prompt(app=app)
-
             elif choice == '3':
                 print("종료 선택")
                 break
@@ -126,17 +125,24 @@ def signup_prompt(app: AppContext) -> None:
     return None
 
 def login_prompt(app: AppContext) -> None:
-
-    #todo 관리자 로그인 분기 처리 필요
-
     while True:
         user_id = input_with_validation(
             "ID를 입력하세요: ",
             [
                 (is_valid_user_id, "잘못된 ID입니다."),
-                (lambda v: not is_available_user_id(user_id=v, app=app), "존재하지 않는 ID입니다."),
+                # (lambda v: not is_available_user_id(user_id=v, app=app), "존재하지 않는 ID입니다."),
             ]
         )
+        if is_reserved_user_id(user_id=user_id):
+            # 관리자 페이지로 이동
+            admin_prompt(app=app)
+            # 메인 프롬프트로 복귀
+            return None
+
+        if is_available_user_id(user_id=user_id, app=app):
+            print(f"존재하는 ID입니다. pw를 입력해주세요.")
+            continue
+
         if user_id:
             break
     log.debug(f"사용 가능한 ID 입력: {user_id}")
@@ -159,7 +165,10 @@ def login_prompt(app: AppContext) -> None:
     app.set_current_user(user)
     log.info(f"로그인 완료: ID={user_id}")
 
-    # main으로 이동함
+    # 로그인 완료 후 유저 프롬프트 이동
+    user_prompt(app=app)
+
+    # 그 후 main으로 이동함
     return None
 
 

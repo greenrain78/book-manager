@@ -20,8 +20,8 @@ def user_prompt(app: AppContext) -> None:
         elif choice == '3':
             return_prompt(app=app)
         elif choice == '4':
-            confirm = input("정말 로그아웃하시겠습니까? (Y/N): ").strip()
-            if confirm == 'y':
+            confirm = yes_no_prompt(f"정말 반납하시겠습니까? (Y/N):")
+            if confirm:
                 break
         else:
             print("잘못된 입력입니다!! 1,2,3,4 중 하나를 입력하세요.")
@@ -64,7 +64,7 @@ def borrow_prompt(app: AppContext) -> None:
         book_id = input_with_validation(
             "대출할 책의 고유번호를 입력하세요 :",
             [
-                (lambda v: exist_book_id(app, int(v)), "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
+                (lambda v: exist_book_id(app, v), "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
                 (lambda v: not is_book_borrowed(app, v), "해당 도서는 이미 대출중입니다!! 다른 책을 입력하세요."),
             ]
         )
@@ -92,7 +92,6 @@ def borrow_prompt(app: AppContext) -> None:
     return None
 
 def return_prompt(app: AppContext) -> None:
-
     # 대출중인 내역 조회
     borrowed_books = [borrow for borrow in app.borrow.data if borrow.user_id == app.current_user.user_id]
     if not borrowed_books:
@@ -103,7 +102,6 @@ def return_prompt(app: AppContext) -> None:
         book = next((b for b in app.books.data if b.book_id == borrow.book_id), None)
         print(f"제목: {book.title}")
         print(f"저자: {book.author}")
-
         confirm = yes_no_prompt(f"정말 반납하시겠습니까? (Y/N):")
         if confirm:
             app.borrow.delete(book_id=book.book_id)
