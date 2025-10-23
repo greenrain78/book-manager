@@ -68,6 +68,10 @@ class BorrowRepository(BaseRepository):
         self.data.append(borrow)
         self.save_all()
 
+    def delete(self, book_id: str) -> None:
+        self.data = [b for b in self.data if b.book_id != book_id] # 특정 book_id를 가진 대출 기록 삭제
+        self.save_all()
+
 class BorrowHistoryRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=5, factory_from_fields=BorrowHistory.from_fields)
@@ -75,3 +79,4 @@ class BorrowHistoryRepository(BaseRepository):
     def insert(self, borrow_history: BorrowHistory) -> None:
         self.data.append(borrow_history)
         self.save_all()
+

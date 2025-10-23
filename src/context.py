@@ -10,10 +10,10 @@ class AppContext:
         self.current_date = None
         self.current_user = None
 
-        self.users = UsersRepository(path="data/users.txt")
-        self.books = BooksRepository(path="data/books.txt")
-        self.borrow = BorrowRepository(path="data/borrow.txt")
-        self.borrow_history = BorrowHistoryRepository(path="data/borrow.txt")
+        self.users: UsersRepository = UsersRepository(path="data/users.txt")
+        self.books: BooksRepository = BooksRepository(path="data/books.txt")
+        self.borrow: BorrowRepository = BorrowRepository(path="data/borrow.txt")
+        self.borrow_history: BorrowHistoryRepository = BorrowHistoryRepository(path="data/borrow_history.txt")
 
     def login(self, username, password):
         # 실제 애플리케이션에서는 데이터베이스 조회 등을 통해 인증을 수행합니다.
