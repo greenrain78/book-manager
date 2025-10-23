@@ -2,7 +2,7 @@ from src.context import AppContext
 from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.repository.entity import Borrow, BorrowHistory
-from src.vaild.user import is_book_borrowed
+from src.vaild.user import is_book_borrowed, exist_book_title, is_valid_book_title, exist_book_id
 
 
 def user_prompt(app: AppContext) -> None:
@@ -36,12 +36,14 @@ def search_prompt(app: AppContext) -> None:
         keyword = input_with_validation(
             "검색할 책 제목을 입력하세요 : ",
             [
-                # (lambda v: len(v) > 0, "검색어는 비어 있을 수 없습니다."
-                # 제목에는 하이픈(-) 및 기타 특수문자는 포함되어서는 안 됩니다!! 올바른 제목을 입력하세요.
-                # 공백이 너무 많습니다!! 올바른 제목을 입력하세요.
-                # 목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요.
-
-                #todo 검증 함수 추가
+                # 알파벳과 숫자 그리고 공백만
+                (lambda v: any(ch.isalnum() or ch.isspace() for ch in v), "제목에는 하이픈(-) 및 기타 특수문자는 포함되어서는 안 됩니다!! 올바른 제목을 입력하세요."),
+                # 공백이 2개 이상 연속으로 포함되어 있는지 검사
+                (lambda v: '  ' not in v, "공백이 너무 많습니다!! 올바른 제목을 입력하세요."),
+                # 존재하는 도서 제목인지 검사
+                (lambda v: exist_book_title(app=app, title=v), "목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요."),
+                # 정규식
+                (is_valid_book_title, "잘못된 입력입니다!! 올바른 제목을 입력하세요."),
             ]
         )
         if keyword:
@@ -62,9 +64,8 @@ def borrow_prompt(app: AppContext) -> None:
         book_id = input_with_validation(
             "대출할 책의 고유번호를 입력하세요 :",
             [
-                # 존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요.
+                (lambda v: exist_book_id(app, int(v)), "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
                 (lambda v: not is_book_borrowed(app, v), "해당 도서는 이미 대출중입니다!! 다른 책을 입력하세요."),
-                #todo 검증 함수 추가
             ]
         )
         if book_id:
