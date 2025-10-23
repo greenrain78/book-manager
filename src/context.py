@@ -25,6 +25,9 @@ class AppContext:
     def set_current_date(self, now_date):
         self.current_date = now_date
 
+    def set_current_user(self, user):
+        self.current_user = user
+
     @staticmethod
     def exit_with_error(msg):
         print(msg)

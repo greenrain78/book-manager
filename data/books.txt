@@ -1,0 +1,3 @@
+001|Computer Science|Andrew Tanenbaum
+002|Python Basics|Guido Rossum
+003|Data Structures|Mark Weiss

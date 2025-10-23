@@ -3,6 +3,7 @@ from logging import getLogger
 
 from src.context import AppContext
 from src.core.valid import input_with_validation, parse_with_validation
+from src.prompt.user import user_prompt
 from src.repository.entity import User
 from src.vaild.basic import is_valid_date_format, is_previous_date
 from src.vaild.start import is_valid_user_id, is_valid_password, is_valid_email, is_available_user_id, \
@@ -63,6 +64,8 @@ def main_prompt(app: AppContext) -> None:
             elif choice == '2':
                 print("로그인 선택")
                 login_prompt(app=app)
+                user_prompt(app=app)
+
             elif choice == '3':
                 print("종료 선택")
                 break
@@ -75,7 +78,6 @@ def main_prompt(app: AppContext) -> None:
     return None
 
 def signup_prompt(app: AppContext) -> None:
-
     # 회원가입 레코드 갯수 제한 검사
     if len(app.users.data) > 20:
         app.exit_with_error(f"ID갯수가 총 20개를 초과하였습니다!! 다음에 이용해주세요^^")
@@ -152,8 +154,12 @@ def login_prompt(app: AppContext) -> None:
         if password:
             break
     log.debug(f"사용 가능한 pwd 입력: {password}")
+
+    # 로그인 완료 처리
+    app.set_current_user(user)
+    log.info(f"로그인 완료: ID={user_id}")
+
     # main으로 이동함
-    print(f"로그인 성공! 환영합니다, {user_id}님.")
     return None
 
 

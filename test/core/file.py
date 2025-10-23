@@ -1,8 +1,9 @@
-from src.repository.manager import UsersRepository
+from src.repository.manager import UsersRepository, BooksRepository
 
 if __name__ == "__main__":
     # 테스트용 코드
-    fm = UsersRepository(path="data/users.txt")
+    # fm = UsersRepository(path="data/users.txt")
+    fm = BooksRepository(path="data/books.txt")
 
     for user in fm.data:
         print(user)
