@@ -65,13 +65,7 @@ def main_prompt(app: AppContext) -> None:
             elif choice == '2':
                 print("로그인 선택")
                 login_prompt(app=app)
-                if is_admin_id(user_id=app.current_user.user_id):
-                    # 관리자 페이지로 이동
-                    admin_prompt(app=app)
-                    # 메인 프롬프트로 복귀
-                else:
-                    # 로그인 완료 후 유저 프롬프트 이동
-                    user_prompt(app=app)
+
             elif choice == '3':
                 print("종료 선택")
                 break
@@ -136,12 +130,19 @@ def login_prompt(app: AppContext) -> None:
         user_id = input_with_validation(
             "ID를 입력하세요: ",
             [
-                (is_valid_user_id, "잘못된 ID입니다."),
-                (lambda v: not is_available_user_id(user_id=v, app=app), "존재하지 않는 ID입니다!! ID를 다시 입력하세요.")
             ]
         )
         if user_id:
             break
+
+    if is_available_user_id(user_id=user_id, app=app):
+        print(f"존재하지 않는 ID입니다!!  ID를 다시 입력하세요.")
+        return None
+
+
+    if not is_valid_user_id(user_id=user_id):
+        print(f"잘못된 ID입니다.")
+        return None
 
     log.debug(f"사용 가능한 ID 입력: {user_id}")
     user = next((u for u in app.users.data if u.user_id == user_id), None) # 사용자 정보 조회
@@ -151,17 +152,31 @@ def login_prompt(app: AppContext) -> None:
         password = input_with_validation(
             "pwd를 입력하세요 :",
             [
-                (is_valid_password, "잘못된 형식입니다!!  pw를 다시 입력하세요."),
-                (lambda v: user.pw == v, "ID와 일치하는 pw가 아닙니다!!  pw를 다시 입력하세요."),
             ]
         )
         if password:
             break
+    if user.pw != password:
+        print(f"ID와 일치하는 pw가 아닙니다!!  pw를 다시 입력하세요.")
+        return None
+
+    if not is_valid_password(password=password):
+        print(f"잘못된 형식입니다!!  pw를 다시 입력하세요.")
+        return None
     log.debug(f"사용 가능한 pwd 입력: {password}")
 
     # 로그인 완료 처리
     app.set_current_user(user)
     log.info(f"로그인 완료: ID={user_id}")
+
+    if is_admin_id(user_id=app.current_user.user_id):
+        # 관리자 페이지로 이동
+        admin_prompt(app=app)
+        # 메인 프롬프트로 복귀
+    else:
+        # 로그인 완료 후 유저 프롬프트 이동
+        user_prompt(app=app)
+
     # 그 후 main으로 이동함
     return None
 

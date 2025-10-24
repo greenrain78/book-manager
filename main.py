@@ -5,7 +5,7 @@ from src.prompt.start import date_input_prompt, main_prompt
 
 logging.basicConfig(
     level=logging.DEBUG,                       # 로그 레벨 (DEBUG 이상 기록)
-    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+    format="%(asctime)s [%(levelname)s] %(name)s:%(lineno)d - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",               # 시간 포맷
     handlers=[
         logging.FileHandler("debug.log", encoding="utf-8"),  # 파일 기록
