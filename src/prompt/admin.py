@@ -27,9 +27,7 @@ def admin_prompt(app: AppContext) -> None:
             print("도서 수정 선택")
             modify_book_prompt(app=app)
         elif choice == '4':
-            confirm = yes_no_prompt(f"정말 반납하시겠습니까? (Y/N):")
-            if confirm:
-                break
+            break
         else:
             print("입력에 해당하는 명령어가 없습니다. 다시 입력해 주세요.")
 
