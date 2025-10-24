@@ -14,20 +14,8 @@ def is_valid_date_format(date_str: str) -> bool:
     except ValueError:
         return False
 
-def is_previous_date(input_date) -> bool:
+def is_previous_date(input_date: datetime, app: AppContext) -> bool:
     """Check if the input date is before the current date."""
-    #todo 현재 날짜와 비교하는 로직 추가
-    return True
-
-def valid_dates_on_start(app: AppContext) -> None:
-    """
-    Validate dates on application start.
-    :param app:
-    :return:
-    """
-    # if self.current_date is None:
-    #     raise ValueError("현재 날짜가 설정되지 않았습니다.")
-
     all_dates = []
 
     # BorrowRepository
@@ -47,5 +35,6 @@ def valid_dates_on_start(app: AppContext) -> None:
                 raise e
 
     # 모든 날짜가 현재 날짜보다 미래인지 확인
-    if all_dates and all(date > app.current_date for date in all_dates):
-        app.exit_with_error("모든 날짜가 현재 날짜보다 미래입니다. 날짜 데이터를 확인하세요.")
+    if all_dates and all(date > input_date for date in all_dates):
+        return False
+    return True

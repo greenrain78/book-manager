@@ -32,7 +32,7 @@ def date_input_prompt(app: AppContext) -> None:
             lambda v: datetime.strptime(v, "%Y-%m-%d"),
             "잘못된 입력입니다!! 올바른 날짜를 입력하세요.",
             [
-                (is_previous_date, "이전 날짜를 입력했습니다!! 올바른 날짜를 입력하세요.")
+                (lambda v: is_previous_date(input_date=v, app=app), "이전 날짜를 입력했습니다!! 올바른 날짜를 입력하세요."),
             ]
         )
         if now_date is not None:

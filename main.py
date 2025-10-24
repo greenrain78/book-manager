@@ -2,7 +2,6 @@ import logging
 
 from src.context import AppContext
 from src.prompt.start import date_input_prompt, main_prompt
-from src.vaild.basic import valid_dates_on_start
 
 logging.basicConfig(
     level=logging.DEBUG,                       # 로그 레벨 (DEBUG 이상 기록)
@@ -19,8 +18,6 @@ if __name__ == '__main__':
     app = AppContext()
     # 날짜 입력
     date_input_prompt(app=app)
-    # 무결성 검사
-    valid_dates_on_start(app=app)
     # 메인 프롬프트
     main_prompt(app=app)
     log.debug(f"==================== 프로그램 종료 ====================")
