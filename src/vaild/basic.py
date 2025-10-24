@@ -34,6 +34,6 @@ def is_previous_date(input_date: datetime, app: AppContext) -> bool:
             except Exception as e:
                 raise e
 
-    if all_dates and any(date > input_date for date in all_dates):
+    if all_dates and any(date >= input_date for date in all_dates):
         return False
     return True
