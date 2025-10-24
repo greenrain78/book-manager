@@ -48,6 +48,7 @@ def search_prompt(app: AppContext) -> None:
             break
     if not exist_book_title(app=app, title=keyword):
         print("목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요.")
+        return None
 
     results = [book for book in app.books.data if keyword.lower() in book.title.lower()]
     for book in results:
