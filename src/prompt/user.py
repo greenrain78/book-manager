@@ -40,14 +40,14 @@ def search_prompt(app: AppContext) -> None:
                 (lambda v: any(ch.isalnum() or ch.isspace() for ch in v), "제목에는 하이픈(-) 및 기타 특수문자는 포함되어서는 안 됩니다!! 올바른 제목을 입력하세요."),
                 # 공백이 2개 이상 연속으로 포함되어 있는지 검사
                 (lambda v: '  ' not in v, "공백이 너무 많습니다!! 올바른 제목을 입력하세요."),
-                # 존재하는 도서 제목인지 검사
-                (lambda v: not exist_book_title(app=app, title=v), "목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요."),
                 # 정규식
                 (is_valid_book_title, "잘못된 입력입니다!! 올바른 제목을 입력하세요."),
             ]
         )
         if keyword:
             break
+    if not exist_book_title(app=app, title=keyword):
+        print("목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요.")
 
     results = [book for book in app.books.data if keyword.lower() in book.title.lower()]
     for book in results:
@@ -55,7 +55,6 @@ def search_prompt(app: AppContext) -> None:
             print(f"대출중 | {book.book_id}")
         else:
             print(f"대여가능 | {book.book_id}")
-
     return None
 
 # 대출
@@ -65,11 +64,14 @@ def borrow_prompt(app: AppContext) -> None:
             "대출할 책의 고유번호를 입력하세요 :",
             [
                 (lambda v: exist_book_id(app, v), "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
-                (lambda v: not is_book_borrowed(app, v), "해당 도서는 이미 대출중입니다!! 다른 책을 입력하세요."),
             ]
         )
         if book_id:
             break
+
+    if is_book_borrowed(app=app, book_id=book_id):
+        print("이미 대출중인 도서입니다!! 다른 책을 입력하세요.")
+        return None
 
     # 반납하지 않은 책이 있는지 검사
     if any(borrow.user_id == app.current_user.user_id for borrow in app.borrow.data):

@@ -1,7 +1,7 @@
 from src.context import AppContext
 import re
 
-def is_book_borrowed(app: AppContext, book_id: int) -> bool:
+def is_book_borrowed(app: AppContext, book_id: str) -> bool:
     return any(borrow.book_id == book_id for borrow in app.borrow.data)
 
 def exist_book_title(app: AppContext, title: str) -> bool:
