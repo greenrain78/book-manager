@@ -20,7 +20,7 @@ def user_prompt(app: AppContext) -> None:
         elif choice == '3':
             return_prompt(app=app)
         elif choice == '4':
-            confirm = yes_no_prompt(f"정말 반납하시겠습니까? (Y/N):")
+            confirm = yes_no_prompt(f"정말 로그아웃하시겠습니까? (Y/N):")
             if confirm:
                 break
         else:
