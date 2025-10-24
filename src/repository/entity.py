@@ -33,6 +33,7 @@ class Book:
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
 @dataclass
 class Borrow:
     book_id: str
