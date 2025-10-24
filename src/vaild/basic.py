@@ -20,7 +20,7 @@ def is_previous_date(input_date: datetime, app: AppContext) -> bool:
 
     # BorrowRepository
     for borrow in app.borrow.data:
-        for date_str in [borrow.borrow_date, borrow.due_date]:
+        for date_str in [borrow.borrow_date]:
             try:
                 all_dates.append(datetime.strptime(date_str, "%Y-%m-%d"))
             except Exception as e:
