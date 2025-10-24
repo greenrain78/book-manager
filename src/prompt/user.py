@@ -37,7 +37,7 @@ def search_prompt(app: AppContext) -> None:
             "검색할 책 제목을 입력하세요 : ",
             [
                 # 알파벳과 숫자 그리고 공백만
-                (lambda v: any(ch.isalnum() or ch.isspace() for ch in v), "제목에는 하이픈(-) 및 기타 특수문자는 포함되어서는 안 됩니다!! 올바른 제목을 입력하세요."),
+                (lambda v: all(ch.isalnum() or ch.isspace() for ch in v), "제목에는 하이픈(-) 및 기타 특수문자는 포함되어서는 안 됩니다!! 올바른 제목을 입력하세요."),
                 # 공백이 2개 이상 연속으로 포함되어 있는지 검사
                 (lambda v: '  ' not in v, "공백이 너무 많습니다!! 올바른 제목을 입력하세요."),
                 # 정규식
