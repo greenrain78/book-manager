@@ -1,6 +1,7 @@
 import re
 
 from src.context import AppContext
+from src.settings import RESERVED_WORDS
 
 
 def is_valid_user_id(user_id: str) -> bool:
@@ -47,13 +48,10 @@ def is_reserved_user_id(user_id: str) -> bool:
     :param user_id:
     :return:
     """
-
-    reserved_words = ["admin", ]
     lower_user_id = user_id.lower()
-    for word in reserved_words:
+    for word in RESERVED_WORDS:
         if word in lower_user_id:
             return True
-
     return False
 
 def is_valid_password(password: str) -> bool:

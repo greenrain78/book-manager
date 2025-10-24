@@ -1,19 +1,20 @@
 from datetime import timedelta
 
 from src.repository.manager import UsersRepository, BooksRepository, BorrowHistoryRepository, BorrowRepository
+from src.settings import BORROW_HISTORY_DATA_PATH, BORROW_DATA_PATH, BOOK_DATA_PATH, USER_DATA_PATH, BORROW_PERIOD_DAYS
 
 
 class AppContext:
-    borrow_period = timedelta(days=7) # 대출 기간: 7일
+    borrow_period = timedelta(days=BORROW_PERIOD_DAYS)
 
     def __init__(self):
         self.current_date = None
         self.current_user = None
 
-        self.users: UsersRepository = UsersRepository(path="data/users.txt")
-        self.books: BooksRepository = BooksRepository(path="data/books.txt")
-        self.borrow: BorrowRepository = BorrowRepository(path="data/borrow.txt")
-        self.borrow_history: BorrowHistoryRepository = BorrowHistoryRepository(path="data/borrow_history.txt")
+        self.users: UsersRepository = UsersRepository(path=USER_DATA_PATH)
+        self.books: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
+        self.borrow: BorrowRepository = BorrowRepository(path=BORROW_DATA_PATH)
+        self.borrow_history: BorrowHistoryRepository = BorrowHistoryRepository(path=BORROW_HISTORY_DATA_PATH)
 
     def login(self, username, password):
         # 실제 애플리케이션에서는 데이터베이스 조회 등을 통해 인증을 수행합니다.

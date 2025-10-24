@@ -130,7 +130,6 @@ def login_prompt(app: AppContext) -> None:
             "ID를 입력하세요: ",
             [
                 (is_valid_user_id, "잘못된 ID입니다."),
-                # (lambda v: not is_available_user_id(user_id=v, app=app), "존재하지 않는 ID입니다."),
             ]
         )
         if is_reserved_user_id(user_id=user_id):
@@ -140,7 +139,7 @@ def login_prompt(app: AppContext) -> None:
             return None
 
         if is_available_user_id(user_id=user_id, app=app):
-            print(f"존재하는 ID입니다. pw를 입력해주세요.")
+            print(f"존재하지 않는 ID입니다!! ID를 다시 입력하세요.")
             continue
 
         if user_id:
