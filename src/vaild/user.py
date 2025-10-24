@@ -5,10 +5,9 @@ def is_book_borrowed(app: AppContext, book_id: str) -> bool:
     return any(borrow.book_id == book_id for borrow in app.borrow.data)
 
 def exist_book_title(app: AppContext, title: str) -> bool:
-    return any(book.title == title for book in app.books.data)
+    return any(title in book.title for book in app.books.data)
 
 def exist_book_id(app: AppContext, book_id: str) -> bool:
-    print(f"검사할 도서 ID: {book_id}")
     return any(book.book_id == book_id for book in app.books.data)
 
 def is_valid_book_title(title: str) -> bool:
