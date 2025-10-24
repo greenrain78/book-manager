@@ -28,7 +28,7 @@ def is_previous_date(input_date: datetime, app: AppContext) -> bool:
 
     # BorrowHistoryRepository
     for history in app.borrow_history.data:
-        for date_str in [history.borrow_date, history.due_date, history.return_date]:
+        for date_str in [history.borrow_date, history.return_date]:
             try:
                 all_dates.append(datetime.strptime(date_str, "%Y-%m-%d"))
             except Exception as e:
