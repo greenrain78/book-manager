@@ -1,7 +1,7 @@
 import re
 
 from src.context import AppContext
-from src.settings import RESERVED_WORDS
+from src.settings import ADMIN_WORDS
 
 
 def is_valid_user_id(user_id: str) -> bool:
@@ -40,7 +40,7 @@ def is_available_user_id(user_id: str, app: AppContext) -> bool:
             return False # 이미 존재하는 ID
     return True
 
-def is_reserved_user_id(user_id: str) -> bool:
+def is_admin_id(user_id: str) -> bool:
     """
     예약어 검사
     예를 들어, “Admin”, “ADMIN”은 모두 예약어이므로 금지됩니다.
@@ -49,7 +49,7 @@ def is_reserved_user_id(user_id: str) -> bool:
     :return:
     """
     lower_user_id = user_id.lower()
-    for word in RESERVED_WORDS:
+    for word in ADMIN_WORDS:
         if word in lower_user_id:
             return True
     return False

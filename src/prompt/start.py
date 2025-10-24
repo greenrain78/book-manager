@@ -8,7 +8,7 @@ from src.prompt.user import user_prompt
 from src.repository.entity import User
 from src.vaild.basic import is_valid_date_format, is_previous_date
 from src.vaild.start import is_valid_user_id, is_valid_password, is_valid_email, is_available_user_id, \
-    is_reserved_user_id, is_not_same_as_id
+    is_admin_id, is_not_same_as_id
 
 log = getLogger(__name__)
 
@@ -65,6 +65,13 @@ def main_prompt(app: AppContext) -> None:
             elif choice == '2':
                 print("로그인 선택")
                 login_prompt(app=app)
+                if is_admin_id(user_id=app.current_user.user_id):
+                    # 관리자 페이지로 이동
+                    admin_prompt(app=app)
+                    # 메인 프롬프트로 복귀
+                else:
+                    # 로그인 완료 후 유저 프롬프트 이동
+                    user_prompt(app=app)
             elif choice == '3':
                 print("종료 선택")
                 break
@@ -88,7 +95,7 @@ def signup_prompt(app: AppContext) -> None:
             [
                 (is_valid_user_id, "ID가 4자리 이상이어야 합니다!!  다른 ID를 입력하세요."),
                 (lambda v: is_available_user_id(user_id=v, app=app), "이미 존재하는 ID입니다!!  다른 ID를 입력하세요."),
-                (lambda v: not is_reserved_user_id(user_id=v), "잘못된 ID입니다!! 다른 ID를 입력하세요.")
+                (lambda v: not is_admin_id(user_id=v), "잘못된 ID입니다!! 다른 ID를 입력하세요.")
             ]
         )
         if user_id:
@@ -130,20 +137,12 @@ def login_prompt(app: AppContext) -> None:
             "ID를 입력하세요: ",
             [
                 (is_valid_user_id, "잘못된 ID입니다."),
+                (lambda v: not is_available_user_id(user_id=v, app=app), "존재하지 않는 ID입니다!! ID를 다시 입력하세요.")
             ]
         )
-        if is_reserved_user_id(user_id=user_id):
-            # 관리자 페이지로 이동
-            admin_prompt(app=app)
-            # 메인 프롬프트로 복귀
-            return None
-
-        if is_available_user_id(user_id=user_id, app=app):
-            print(f"존재하지 않는 ID입니다!! ID를 다시 입력하세요.")
-            continue
-
         if user_id:
             break
+
     log.debug(f"사용 가능한 ID 입력: {user_id}")
     user = next((u for u in app.users.data if u.user_id == user_id), None) # 사용자 정보 조회
 
@@ -163,10 +162,6 @@ def login_prompt(app: AppContext) -> None:
     # 로그인 완료 처리
     app.set_current_user(user)
     log.info(f"로그인 완료: ID={user_id}")
-
-    # 로그인 완료 후 유저 프롬프트 이동
-    user_prompt(app=app)
-
     # 그 후 main으로 이동함
     return None
 

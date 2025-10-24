@@ -1,5 +1,7 @@
 from datetime import timedelta
+from typing import Optional
 
+from src.repository.entity import User
 from src.repository.manager import UsersRepository, BooksRepository, BorrowHistoryRepository, BorrowRepository
 from src.settings import BORROW_HISTORY_DATA_PATH, BORROW_DATA_PATH, BOOK_DATA_PATH, USER_DATA_PATH, BORROW_PERIOD_DAYS
 
@@ -9,7 +11,7 @@ class AppContext:
 
     def __init__(self):
         self.current_date = None
-        self.current_user = None
+        self.current_user: Optional[User] = None
 
         self.users: UsersRepository = UsersRepository(path=USER_DATA_PATH)
         self.books: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
@@ -30,7 +32,7 @@ class AppContext:
     def set_current_date(self, now_date):
         self.current_date = now_date
 
-    def set_current_user(self, user):
+    def set_current_user(self, user: User):
         self.current_user = user
 
     @staticmethod
