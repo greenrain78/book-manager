@@ -34,7 +34,6 @@ def is_previous_date(input_date: datetime, app: AppContext) -> bool:
             except Exception as e:
                 raise e
 
-    # 모든 날짜가 현재 날짜보다 미래인지 확인
-    if all_dates and all(date > input_date for date in all_dates):
+    if all_dates and any(date > input_date for date in all_dates):
         return False
     return True
