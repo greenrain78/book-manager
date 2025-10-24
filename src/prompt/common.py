@@ -6,7 +6,7 @@ import os
 # y N 입력 프롬프트
 def yes_no_prompt(prompt: str) -> bool:
     while True:
-        choice = input(f"{prompt} (y/n): ").strip().lower()
+        choice = input(f"{prompt}").strip().lower()
         if choice in ['y', 'n']:
             return choice == 'y'
         else:
