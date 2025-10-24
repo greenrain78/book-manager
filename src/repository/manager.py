@@ -27,9 +27,13 @@ class BaseRepository:
 
     # ---- IO ----
     def load_all(self) -> None:
+        if not os.path.exists(self.path):
+            open(self.path, "w").close()
+            return
+
         # 초기화
         self.data = []
-        with open(self.path, "r", encoding="utf-8", newline="") as fp:
+        with open(self.path, "r", newline="") as fp:
             for line in fp:
                 raw = line.rstrip("\r\n")
                 self._validate_line_common(raw)
