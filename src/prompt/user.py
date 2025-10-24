@@ -49,7 +49,7 @@ def search_prompt(app: AppContext) -> None:
         if keyword:
             break
 
-    results = [book for book in app.books.data if keyword in book.title]
+    results = [book for book in app.books.data if keyword.lower() in book.title.lower()]
     for book in results:
         if any(borrow.book_id == book.book_id for borrow in app.borrow.data):
             print(f"대출중 | {book.book_id}")
