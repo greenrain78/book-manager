@@ -41,7 +41,7 @@ def search_prompt(app: AppContext) -> None:
                 # 공백이 2개 이상 연속으로 포함되어 있는지 검사
                 (lambda v: '  ' not in v, "공백이 너무 많습니다!! 올바른 제목을 입력하세요."),
                 # 존재하는 도서 제목인지 검사
-                (lambda v: exist_book_title(app=app, title=v), "목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요."),
+                (lambda v: not exist_book_title(app=app, title=v), "목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요."),
                 # 정규식
                 (is_valid_book_title, "잘못된 입력입니다!! 올바른 제목을 입력하세요."),
             ]

@@ -1,8 +1,3 @@
-import os
-
-
-
-
 # y N 입력 프롬프트
 def yes_no_prompt(prompt: str) -> bool:
     while True:
