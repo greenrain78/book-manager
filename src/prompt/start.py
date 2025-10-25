@@ -87,7 +87,8 @@ def signup_prompt(app: AppContext) -> None:
         user_id = input_with_validation(
             "ID를 입력하세요: ",
             [
-                (is_valid_user_id, "ID가 4자리 이상이어야 합니다!!  다른 ID를 입력하세요."),
+                (lambda v: len(v) >= 4, "ID가 4자리 이상이어야 합니다!!  다른 ID를 입력하세요."),
+                (is_valid_user_id, "잘못된 ID입니다!! 다른 ID를 입력하세요."),
                 (lambda v: is_available_user_id(user_id=v, app=app), "이미 존재하는 ID입니다!!  다른 ID를 입력하세요."),
                 (lambda v: not is_admin_id(user_id=v), "잘못된 ID입니다!! 다른 ID를 입력하세요.")
             ]
