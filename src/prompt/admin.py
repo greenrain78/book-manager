@@ -49,7 +49,7 @@ def add_book_prompt(app: AppContext) -> None:
             [
                 # 도서명은 한글자 이상 입력해야합니다!!
                 (lambda v: len(v.strip()) > 0, "도서명은 한글자 이상 입력해야합니다!!"),
-                (lambda v: '  ' not in v, "저자는 불필요한 공백이나 특수문자를 포함하지 않아야 합니다."),
+                (lambda v: '  ' not in v, "도서명는 불필요한 공백이나 특수문자를 포함하지 않아야 합니다."),
                 # 도서명은 불필요한 공백이나 특수문자를 포함하지 않아야 합니다.
                 (lambda v: all(ch.isalnum() or ch.isspace() for ch in v), "도서명은 불필요한 공백이나 특수문자를 포함하지 않아야 합니다."),
                 # 유효한 도서 제목인지 검사
@@ -65,6 +65,7 @@ def add_book_prompt(app: AppContext) -> None:
             [
                 # 저자는 한글자 이상 입력해야합니다!!
                 (lambda v: len(v.strip()) > 0, "저자는 한글자 이상 입력해야합니다!!"),
+                (lambda v: '  ' not in v, "저자는 불필요한 공백이나 특수문자를 포함하지 않아야 합니다."),
                 # 저자는 불필요한 공백이나 특수문자를 포함하지 않아야 합니다.
                 (lambda v: all(ch.isalnum() or ch.isspace() for ch in v), "저자는 불필요한 공백이나 특수문자를 포함하지 않아야 합니다."),
                 # 유효한 저자명인지 검사
