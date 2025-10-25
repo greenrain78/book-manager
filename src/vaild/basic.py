@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from src.context import AppContext
@@ -5,6 +6,8 @@ from src.context import AppContext
 
 def is_valid_date_format(date_str: str) -> bool:
     """Check if the date string is in YYYY-MM-DD format."""
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_str):
+        return False
     try:
         year, month, day = map(int, date_str.split('-'))
         if 1 <= month <= 12 and 1 <= day <= 31:
@@ -13,6 +16,9 @@ def is_valid_date_format(date_str: str) -> bool:
             return False
     except ValueError:
         return False
+
+    # if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", v):
+
 
 def is_previous_date(input_date: datetime, app: AppContext) -> bool:
     """Check if the input date is before the current date."""
