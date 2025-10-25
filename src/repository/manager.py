@@ -29,9 +29,8 @@ class BaseRepository:
     # ---- IO ----
     def load_all(self) -> None:
         if not os.path.exists(self.path):
-            open(self.path, "w").close()
-            return
-
+            # 필수 데이터 파일이 존재하지 않습니다. 데이터 파일 확인 후 다시 시작해주세요..
+            raise RuntimeError("필수 데이터 파일이 존재하지 않습니다. 데이터 파일 확인 후 다시 시작해주세요.")
         # 초기화
         self.data = []
         with open(self.path, "r", newline="") as fp:

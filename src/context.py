@@ -12,11 +12,13 @@ class AppContext:
     def __init__(self):
         self.current_date = None
         self.current_user: Optional[User] = None
-
-        self.users: UsersRepository = UsersRepository(path=USER_DATA_PATH)
-        self.books: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
-        self.borrow: BorrowRepository = BorrowRepository(path=BORROW_DATA_PATH)
-        self.borrow_history: BorrowHistoryRepository = BorrowHistoryRepository(path=BORROW_HISTORY_DATA_PATH)
+        try:
+            self.users: UsersRepository = UsersRepository(path=USER_DATA_PATH)
+            self.books: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
+            self.borrow: BorrowRepository = BorrowRepository(path=BORROW_DATA_PATH)
+            self.borrow_history: BorrowHistoryRepository = BorrowHistoryRepository(path=BORROW_HISTORY_DATA_PATH)
+        except RuntimeError as e:
+            self.exit_with_error(e)
 
     def login(self, username, password):
         # 실제 애플리케이션에서는 데이터베이스 조회 등을 통해 인증을 수행합니다.
