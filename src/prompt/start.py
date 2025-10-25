@@ -88,6 +88,7 @@ def signup_prompt(app: AppContext) -> None:
             "ID를 입력하세요: ",
             [
                 (lambda v: len(v) >= 4, "ID가 4자리 이상이어야 합니다!!  다른 ID를 입력하세요."),
+                (lambda v: len(v) <= 12, "ID가 12자리 이하이어야 합니다!!  다른 ID를 입력하세요."),
                 (is_valid_user_id, "잘못된 ID입니다!! 다른 ID를 입력하세요."),
                 (lambda v: is_available_user_id(user_id=v, app=app), "이미 존재하는 ID입니다!!  다른 ID를 입력하세요."),
                 (lambda v: not is_admin_id(user_id=v), "잘못된 ID입니다!! 다른 ID를 입력하세요.")
@@ -102,7 +103,9 @@ def signup_prompt(app: AppContext) -> None:
         password = input_with_validation(
             "pwd를 입력하세요 :",
             [
-                (is_valid_password, "패스워드는 8자리 이상이어야 합니다!! 다른 pw를 입력하세요."),
+                #"패스워드는 8자리 이상이어야 합니다!! 다른 pw를 입력하세요."),
+                (lambda v: len(v) >= 8, "pw는 8자리 이상이어야 합니다!! 다른 pw를 입력하세요."),
+                (is_valid_password, "잘못된 형식입니다!! 다른 pw를 입력하세요."),
                 (lambda v: is_not_same_as_id(user_id=user_id, password=v), "pw는 ID와 동일할 수 없습니다!! 다른 pw를 입력하세요."),
             ]
         )
@@ -116,6 +119,7 @@ def signup_prompt(app: AppContext) -> None:
             "이메일을 입력하세요 :",
             [
                 (is_valid_email, "이메일 형식은 xxx@yyy.com 형식입니다!! 형식에 맞게 입력하세요."),
+                (lambda v: len(v) <= 50, "이메일은 50자리 이하이어야 합니다!! 다른 이메일을 입력하세요."),
             ]
         )
         if email:

@@ -6,7 +6,6 @@ BORROW_HISTORY_DATA_PATH = "data/borrow_history.txt"
 
 
 # 관리자
-ADMIN_WORDS = ["admin", ]
-
+ADMIN_WORDS = ["admin", "root", "system", "guest"]
 # 도서
 BORROW_PERIOD_DAYS = 7  # 대출 기간: 7일
