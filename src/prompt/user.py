@@ -64,6 +64,7 @@ def borrow_prompt(app: AppContext) -> None:
         book_id = input_with_validation(
             "대출할 책의 고유번호를 입력하세요 :",
             [
+                (lambda v: ' ' not in v, "고유번호는 공백을 포함하지 않습니다"),
                 (is_vaild_book_id, "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
             ]
         )

@@ -15,7 +15,7 @@ def input_with_validation(
     - 모든 검증을 통과하면 입력값 반환
     """
     while True:
-        value = input(prompt).strip()
+        value = input(prompt)
         log.debug(f"{prompt}:: {value}")
         valid = True
         for fn, msg in validators:
