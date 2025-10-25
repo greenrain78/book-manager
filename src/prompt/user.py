@@ -2,7 +2,7 @@ from src.context import AppContext
 from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.repository.entity import Borrow, BorrowHistory
-from src.vaild.user import is_book_borrowed, exist_book_title, is_valid_book_title, exist_book_id
+from src.vaild.user import is_book_borrowed, exist_book_title, is_valid_book_title, exist_book_id, is_vaild_book_id
 
 
 def user_prompt(app: AppContext) -> None:
@@ -64,6 +64,7 @@ def borrow_prompt(app: AppContext) -> None:
         book_id = input_with_validation(
             "대출할 책의 고유번호를 입력하세요 :",
             [
+                (is_vaild_book_id, "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
             ]
         )
         if book_id:

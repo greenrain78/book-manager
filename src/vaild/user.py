@@ -32,3 +32,16 @@ def is_vaild_author(author: str) -> bool:
     if not re.match(pattern, author):
         return False
     return True
+
+def is_vaild_book_id(book_id: str) -> bool:
+    """
+    도서 고유번호 유효성 검사
+    000 ~ 999
+    :param book_id:
+    :return:
+    """
+
+    pattern = r'^[0-9]{3}$'
+    if not re.match(pattern, book_id):
+        return False
+    return True
