@@ -135,14 +135,16 @@ def login_prompt(app: AppContext) -> None:
         if user_id:
             break
 
-    if is_available_user_id(user_id=user_id, app=app):
-        print(f"존재하지 않는 ID입니다!!  ID를 다시 입력하세요.")
-        return None
-
 
     if not is_valid_user_id(user_id=user_id):
         print(f"잘못된 ID입니다.")
         return None
+
+
+    if is_available_user_id(user_id=user_id, app=app):
+        print(f"존재하지 않는 ID입니다!!  ID를 다시 입력하세요.")
+        return None
+
 
     log.debug(f"사용 가능한 ID 입력: {user_id}")
     user = next((u for u in app.users.data if u.user_id == user_id), None) # 사용자 정보 조회
@@ -156,13 +158,15 @@ def login_prompt(app: AppContext) -> None:
         )
         if password:
             break
-    if user.pw != password:
-        print(f"ID와 일치하는 pw가 아닙니다!!  pw를 다시 입력하세요.")
-        return None
 
     if not is_valid_password(password=password):
         print(f"잘못된 형식입니다!!  pw를 다시 입력하세요.")
         return None
+
+    if user.pw != password:
+        print(f"ID와 일치하는 pw가 아닙니다!!  pw를 다시 입력하세요.")
+        return None
+
     log.debug(f"사용 가능한 pwd 입력: {password}")
 
     # 로그인 완료 처리
