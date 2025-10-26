@@ -132,8 +132,6 @@ def signup_prompt(app: AppContext) -> None:
 
     app.users.insert(User(user_id=user_id, pw=password, email=email))
 
-    # 회원 가입 완료 후 로그인 프롬프트 이동
-    login_prompt(app=app)
     return None
 
 def login_prompt(app: AppContext) -> None:
