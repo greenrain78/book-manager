@@ -13,7 +13,9 @@ class AppContext:
     def __init__(self):
         self.current_date = None
         self.current_user: Optional[User] = None
-
+        # 시스템 요구사항 확인
+        self.check_system_requirements()
+        # 리포지토리 초기화
         try:
             self.users: UsersRepository = UsersRepository(path=USER_DATA_PATH)
             self.books: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
@@ -24,7 +26,7 @@ class AppContext:
 
     def check_system_requirements(self):
         # 디스크 공간 확인
-        if not check_disk_space(required_mb=10, path="."):
+        if not check_disk_space(required_mb=500, path="."):
             self.exit_with_error("필수 데이터 파일을 저장할 공간이 부족합니다. 디스크 용량 확인후 다시 시작해주세요.")
 
     def login(self, username, password):
