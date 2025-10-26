@@ -1,3 +1,4 @@
+import shutil
 from logging import getLogger
 from typing import Callable, Any
 
@@ -57,3 +58,20 @@ def parse_with_validation(
             return value
         if not retry:
             return None
+
+def check_disk_space(required_mb: int, path: str = "/") -> bool:
+    """
+    디스크 여유 용량 확인 함수.
+    - required_mb: 필요한 최소 용량(MB)
+    - path: 확인할 경로 (기본: 루트)
+    반환값:
+      True  → 충분한 공간 있음
+      False → 공간 부족 (경고문 출력)
+    """
+    total, used, free = shutil.disk_usage(path)
+    free_mb = free // (1024 * 1024)  # MB 단위 변환
+
+    if free_mb < required_mb:
+        print("필수 데이터 파일을 저장할 공간이 부족합니다. 디스크 용량 확인후 다시 시작해주세요.")
+        return False
+    return True

@@ -78,7 +78,7 @@ def add_book_prompt(app: AppContext) -> None:
     print(f"[추가할 도서 정보]")
     print(f"도서명: {title}")
     print(f"저자: {author}")
-    confirm = yes_no_prompt(f"정말 추가 하시겠습니까?(Y,N):")
+    confirm = yes_no_prompt(f"정말 추가 하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
     if confirm:
         app.books.insert(Book(book_id=app.books.get_next_id(), title=title, author=author))
         print(f"해당 도서를 추가했습니다.")
@@ -112,7 +112,7 @@ def delete_book_prompt(app: AppContext) -> None:
     print(f"[삭제할 도서 정보]")
     print(f"도서명: {book.title}")
     print(f"저자: {book.author}")
-    confirm = yes_no_prompt(f"정말 삭제 하시겠습니까?(Y,N):")
+    confirm = yes_no_prompt(f"정말 삭제 하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
     if confirm:
         app.books.delete(book_id=book_id)
         print(f"해당 도서를 삭제했습니다.")
@@ -172,7 +172,7 @@ def modify_book_prompt(app: AppContext) -> None:
 
     print(f"변경 전: {book.title} {book.author}")
     print(f"변경 후: {new_title} {new_author}")
-    confirm = yes_no_prompt(f"정말 수정하시겠습니까?(Y,N):")
+    confirm = yes_no_prompt(f"정말 수정하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
     if confirm:
         app.books.modify(book_id=book_id, new_title=new_title, new_author=new_author)
         print(f"해당 도서를 수정했습니다.")

@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import Optional
 
+from src.core.valid import check_disk_space
 from src.repository.entity import User
 from src.repository.manager import UsersRepository, BooksRepository, BorrowHistoryRepository, BorrowRepository
 from src.settings import BORROW_HISTORY_DATA_PATH, BORROW_DATA_PATH, BOOK_DATA_PATH, USER_DATA_PATH, BORROW_PERIOD_DAYS
@@ -12,6 +13,7 @@ class AppContext:
     def __init__(self):
         self.current_date = None
         self.current_user: Optional[User] = None
+
         try:
             self.users: UsersRepository = UsersRepository(path=USER_DATA_PATH)
             self.books: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
@@ -19,6 +21,11 @@ class AppContext:
             self.borrow_history: BorrowHistoryRepository = BorrowHistoryRepository(path=BORROW_HISTORY_DATA_PATH)
         except RuntimeError as e:
             self.exit_with_error(e)
+
+    def check_system_requirements(self):
+        # 디스크 공간 확인
+        if not check_disk_space(required_mb=10, path="."):
+            self.exit_with_error("필수 데이터 파일을 저장할 공간이 부족합니다. 디스크 용량 확인후 다시 시작해주세요.")
 
     def login(self, username, password):
         # 실제 애플리케이션에서는 데이터베이스 조회 등을 통해 인증을 수행합니다.
