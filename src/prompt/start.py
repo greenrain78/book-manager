@@ -63,6 +63,7 @@ def main_prompt(app: AppContext) -> None:
             if choice == '1':
                 print("회원가입 선택")
                 signup_prompt(app=app)
+
             elif choice == '2':
                 print("로그인 선택")
                 login_prompt(app=app)
@@ -130,6 +131,9 @@ def signup_prompt(app: AppContext) -> None:
     log.info(f"회원가입 완료: ID={user_id}, PWD={password}, EMAIL={email}")
 
     app.users.insert(User(user_id=user_id, pw=password, email=email))
+
+    # 회원 가입 완료 후 로그인 프롬프트 이동
+    login_prompt(app=app)
     return None
 
 def login_prompt(app: AppContext) -> None:
