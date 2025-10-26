@@ -21,10 +21,10 @@ class BaseRepository:
     def _validate_line_common(self, raw: str) -> None:
         # 라인이 비었거나(None, 공백, 빈 문자열 등) 아무 문자도 없으면 에러 발생
         if raw is None or raw.strip() == "":
-            raise ValueError(f"필수 데이터 파일이 손상되거나 혹은 필드에 오류가있습니다. 확인 후 다시 시작해주세요.")
+            raise RuntimeError(f"필수 데이터 파일이 손상되거나 혹은 필드에 오류가있습니다. 확인 후 다시 시작해주세요.")
         # 필드 구분자(|) 개수 검사 - 파이프(|) 개수가 기대한 필드 수 -1과 일치하지 않으면 에러 발생
         if raw.count("|") != self.expected_fields - 1:
-            raise ValueError(f"필수 데이터 파일이 손상되거나 혹은 필드에 오류가있습니다. 확인 후 다시 시작해주세요.")
+            raise RuntimeError(f"필수 데이터 파일이 손상되거나 혹은 필드에 오류가있습니다. 확인 후 다시 시작해주세요.")
 
     # ---- IO ----
     def load_all(self) -> None:

@@ -4,6 +4,7 @@ from logging import getLogger
 from src.context import AppContext
 from src.core.valid import input_with_validation, parse_with_validation
 from src.prompt.admin import admin_prompt
+from src.prompt.common import yes_no_prompt
 from src.prompt.user import user_prompt
 from src.repository.entity import User
 from src.vaild.basic import is_valid_date_format, is_previous_date
@@ -67,8 +68,9 @@ def main_prompt(app: AppContext) -> None:
                 login_prompt(app=app)
 
             elif choice == '3':
-                print("종료 선택")
-                break
+                if yes_no_prompt(f"정말 종료하시겠습니까? (Y/N):"):
+                    break
+
             else:
                 print("잘못된 입력입니다!! 1,2,3 중 하나를 입력하세요.")
         except Exception as e:
