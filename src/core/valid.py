@@ -71,6 +71,5 @@ def check_disk_space(required_mb: int, path: str = "/") -> bool:
     free_mb = free // (1024 * 1024)  # MB 단위 변환
 
     if free_mb < required_mb:
-        print("필수 데이터 파일을 저장할 공간이 부족합니다. 디스크 용량 확인후 다시 시작해주세요.")
         return False
     return True
