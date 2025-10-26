@@ -41,23 +41,22 @@ def parse_with_validation(
     - parsers: [(파싱함수, 실패시 메시지), ...]
     - 모든 파싱을 통과하면 파싱된 값 반환
     """
-    while True:
-        try:
-            value = parse_fn(value)
-        except Exception:
-            print(parse_err_msg)
-            return None
-        log.debug(f"parse_with_validation:: {value}")
-        valid = True
-        for fn, msg in validators:
-            if not fn(value):
-                print(msg)
-                valid = False
-                break
-        if valid:
-            return value
-        if not retry:
-            return None
+    try:
+        value = parse_fn(value)
+    except Exception:
+        print(parse_err_msg)
+        return None
+    log.debug(f"parse_with_validation:: {value}")
+    valid = True
+    for fn, msg in validators:
+        if not fn(value):
+            print(msg)
+            valid = False
+            break
+    if valid:
+        return value
+    if not retry:
+        return None
 
 def check_disk_space(required_mb: int, path: str = "/") -> bool:
     """
