@@ -1,4 +1,3 @@
-from src.repository.entity import ISBN
 from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository, BorrowRepository
 
 

@@ -7,8 +7,11 @@ class PromptType(Enum):
     ADMIN_MENU = auto()
     CATEGORY_MENU = auto()
 
-
+    SIGNUP = auto()
     LOGIN = auto()
+    EXIT = auto()
+
+
     BOOK_BORROW = auto()
     BOOK_RETURN = auto()
     SEARCH_BOOK = auto()

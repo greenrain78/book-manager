@@ -58,6 +58,10 @@ class UsersRepository(BaseRepository):
         self.data.append(user)
         self.save_all()
 
+    def count_users(self):
+        return len(self.data)
+
+
 class BooksRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=2, factory_from_fields=Book.from_fields)

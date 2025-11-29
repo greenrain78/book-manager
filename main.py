@@ -19,5 +19,5 @@ if __name__ == '__main__':
     # 날짜 입력
     date_input_prompt(app=app)
     # 메인 프롬프트
-    main_prompt(app=app)
+    app.start()
     log.debug(f"==================== 프로그램 종료 ====================")
