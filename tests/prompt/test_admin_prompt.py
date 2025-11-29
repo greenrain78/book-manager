@@ -2,124 +2,73 @@ import unittest
 from io import StringIO
 from unittest.mock import patch
 
-from src.prompt.menu import admin_prompt
+from src.prompt.admin import add_book_prompt
+from src.repository.entity import ISBN, Book
+from src.service.book_service import BookService
 
-class TestAdminPrompt(unittest.TestCase):
 
-    # ============================================================
-    # 정상 입력 케이스
-    # ============================================================
-    @patch("builtins.input", return_value="1")
+class TestAddBookPrompt(unittest.TestCase):
+
+    def setUp(self):
+        # Mock BookService
+        # 테스트용 순수 Fake 객체 (BookService 상속하지 않음)
+        class FakeBookService:
+            def __init__(self):
+                self.added_books = []  # add_book 호출 내역 저장
+
+            def add_book(self, title: str, author: str) -> None:
+                self.added_books.append((title, author))
+
+            # 필요한 경우만 임의로 구현
+            def search_isbn_by_title(self, keyword: str):
+                return []
+
+            def search_books_by_isbn(self, isbn: str):
+                return []
+
+            def search_category(self, cat_id: str):
+                return None
+
+
+        self.book_service = FakeBookService()
+
+    @patch("builtins.input", side_effect=["New Book Title", "Author Name", "Y"])
     @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_a1(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertIn("Admin", mock_stdout.getvalue())
-        self.assertIn("1. 도서 추가", mock_stdout.getvalue())
-        self.assertIn("2. 도서 삭제", mock_stdout.getvalue())
-        self.assertIn("3. 도서 수정", mock_stdout.getvalue())
-        self.assertIn("4. 카테고리 관리", mock_stdout.getvalue())
-        self.assertIn("5. 로그아웃", mock_stdout.getvalue())
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
+    def test_add_new_book(self, mock_stdout, mock_input):
+        add_book_prompt(book_service=self.book_service)
+        output = mock_stdout.getvalue()
+        self.assertIn("해당 도서를 추가했습니다.", output)
 
-    @patch("builtins.input", return_value="2")
+        # 서비스 호출 검증
+        self.assertEqual(len(self.book_service.added_books), 1)
+        self.assertEqual(self.book_service.added_books[0], ("New Book Title", "Author Name"))
+
+    @patch("builtins.input", side_effect=["Bad  Title", "Good", "Y"])
     @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_a2(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertEqual(result.name, "ADMIN_BOOK_DELETE")
+    def test_title_two_spaces_error(self, mock_stdout, mock_input):
+        # Bad  Title → 두 칸 공백 → 재입력 요구
+        with self.assertRaises(StopIteration):
+            # StopIteration 발생: mock input이 고갈될 때 발생 → 정상
+            add_book_prompt(self.book_service)
 
-    @patch("builtins.input", return_value="3")
+        output = mock_stdout.getvalue()
+        self.assertIn("불필요한 공백", output)
+
+
+    @patch("builtins.input", side_effect=["Java!", "CleanJava", "Y"])
     @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_a3(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertEqual(result.name, "ADMIN_BOOK_MODIFY")
+    def test_title_special_char_error(self, mock_stdout, mock_input):
+        with self.assertRaises(StopIteration):
+            add_book_prompt(self.book_service)
 
-    @patch("builtins.input", return_value="4")
+        output = mock_stdout.getvalue()
+        self.assertIn("불필요한 공백이나 특수문자를 포함", output)
+
+    @patch("builtins.input", side_effect=["", "Java", "Y"])
     @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_a4(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertEqual(result.name, "CATEGORY_MENU")
+    def test_title_empty_error(self, mock_stdout, mock_input):
+        with self.assertRaises(StopIteration):
+            add_book_prompt(self.book_service)
 
-
-    # ============================================================
-    # 로그아웃(Y 처리)
-    # ============================================================
-    @patch("builtins.input", side_effect=["5", "Y"])
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_logout_y(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertEqual(result.name, "LOGOUT")
-
-    # 로그아웃(N 처리 → 다시 명령 선택으로 돌아감)
-    @patch("builtins.input", side_effect=["5", "N", "1"])
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_logout_n(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-
-    # ============================================================
-    # 공백 포함 입력 → 정상 처리 (strip() 적용 확인)
-    # ============================================================
-    @patch("builtins.input", return_value=" 1")
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_b1(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-    @patch("builtins.input", return_value="1 ")
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_b2(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-    @patch("builtins.input", return_value=" 1 ")
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_b3(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-
-    # ============================================================
-    # 잘못된 입력 후 정상 입력
-    # ============================================================
-    @patch("builtins.input", side_effect=["0", "1"])
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_c1(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertIn("입력에 해당하는 명령어가 없습니다.", mock_stdout.getvalue())
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-    @patch("builtins.input", side_effect=["11", "1"])
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_c2(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertIn("입력에 해당하는 명령어가 없습니다.", mock_stdout.getvalue())
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-    @patch("builtins.input", side_effect=["!", "1"])
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_c3(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertIn("입력에 해당하는 명령어가 없습니다.", mock_stdout.getvalue())
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-    @patch("builtins.input", side_effect=["1.0", "1"])
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_c4(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertIn("입력에 해당하는 명령어가 없습니다.", mock_stdout.getvalue())
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-    @patch("builtins.input", side_effect=[" ", "1"])
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_c5(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertIn("입력에 해당하는 명령어가 없습니다.", mock_stdout.getvalue())
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
-
-    @patch("builtins.input", side_effect=["exit", "1"])
-    @patch("sys.stdout", new_callable=StringIO)
-    def test_admin_prompt_c6(self, mock_stdout, mock_input):
-        result = admin_prompt()
-        self.assertIn("입력에 해당하는 명령어가 없습니다.", mock_stdout.getvalue())
-        self.assertEqual(result.name, "ADMIN_BOOK_ADD")
+        output = mock_stdout.getvalue()
+        self.assertIn("도서명은 한글자 이상 입력해야합니다", output)

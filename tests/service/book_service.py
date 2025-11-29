@@ -134,3 +134,112 @@ class TestBookServiceIntegration(unittest.TestCase):
             with self.subTest(keyword=keyword):
                 result = self.service.search_book_by_title(keyword)
                 self.assertEqual(result, [], f"입력값 '{keyword}' 에 대해 결과가 [] 이어야 함")
+
+
+    def test_add_book_isbn_not_exists_new_registration(self):
+        """
+        ISBN 없음 → 신규 등록
+        초기 상태:
+            ISBN07 하나만 존재
+        입력:
+            title="New Title", author="New Author"
+        검증:
+            - ISBNRepository에 새 ISBN 생성됨
+            - books.txt에 새로운 book_id 추가됨
+        """
+        # when
+        self.service.add_book("New Title", "New Author")
+
+        # then
+        # 새 ISBN이 생성되었는지 확인
+        all_isbns = self.isbn_repo.data
+        self.assertEqual(len(all_isbns), 2)
+
+        new_isbn = [i for i in all_isbns if i.title == "New Title"][0]
+        self.assertEqual(new_isbn.author, "New Author")
+        self.assertEqual(new_isbn.cat_id, "CAT00")  # 기본 카테고리 등록 확인
+
+        # books.txt도 1건 증가
+        all_books = self.book_repo.data
+        self.assertEqual(len(all_books), 2)
+        self.assertEqual(all_books[-1].isbn, new_isbn.isbn)
+
+    def test_add_book_title_match_only_register_new(self):
+        """
+        제목만 일치 → 신규 등록
+        조건:
+            기존 ISBN07: title="Computer Science", author="Elon musk"
+        입력:
+            title="Computer Science", author="Different Author"
+
+        Document Case:
+            - 제목만 일치하는 ISBN은 사용하면 안 됨
+            - 저자가 다르면 새 ISBN 생성해야함
+        """
+        # when
+        self.service.add_book("Computer Science", "Different Author")
+
+        # then
+        all_isbns = self.isbn_repo.data
+        self.assertEqual(len(all_isbns), 2)
+
+        # 제목은 같지만 다른 저자로 신규 생성 여부
+        new_isbn = [i for i in all_isbns if i.author == "Different Author"][0]
+        self.assertEqual(new_isbn.title, "Computer Science")
+
+        # books.txt 증가 확인
+        all_books = self.book_repo.data
+        self.assertEqual(len(all_books), 2)
+        self.assertEqual(all_books[-1].isbn, new_isbn.isbn)
+
+    def test_add_book_author_match_only_register_new(self):
+        """
+        저자만 일치 → 신규 등록
+        조건:
+            기존 ISBN07: title="Computer Science", author="Elon musk"
+        입력:
+            title="Different Title", author="Elon musk"
+
+        기대:
+            - 제목이 다르므로 새 ISBN 생성
+        """
+        # when
+        self.service.add_book("Different Title", "Elon musk")
+
+        # then
+        all_isbns = self.isbn_repo.data
+        self.assertEqual(len(all_isbns), 2)
+
+        new_isbn = [i for i in all_isbns if i.title == "Different Title"][0]
+        self.assertEqual(new_isbn.author, "Elon musk")
+
+        # books.txt 증가 확인
+        all_books = self.book_repo.data
+        self.assertEqual(len(all_books), 2)
+        self.assertEqual(all_books[-1].isbn, new_isbn.isbn)
+
+    def test_add_book_isbn_exists_only_books_added(self):
+        """
+        ISBN 존재 → books.txt만 추가
+        조건:
+            기존 ISBN07(title, author 일치)
+        입력:
+            title="Computer Science", author="Elon musk"
+        기대:
+            - ISBNRepository는 변경 없음
+            - books.txt만 추가됨
+        """
+        # when
+        self.service.add_book("Computer Science", "Elon musk")
+
+        # then
+        # ISBN 수 변함 없음
+        all_isbns = self.isbn_repo.data
+        self.assertEqual(len(all_isbns), 1)
+
+        # books.txt 수 증가
+        all_books = self.book_repo.data
+        self.assertEqual(len(all_books), 2)
+
+        # 마지막 book의 isbn은 기존 ISBN07이어야 함
+        self.assertEqual(all_books[-1].isbn, "ISBN07")

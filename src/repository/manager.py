@@ -62,11 +62,13 @@ class BooksRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=2, factory_from_fields=Book.from_fields)
 
-    def insert(self, book: Book) -> None:
+    def insert(self, isbn: str) -> Book:
+        book = Book(book_id=self.get_next_id(), isbn=isbn)
         if len(self.data) >= 20:
             raise RuntimeError("레코드 수가 20개를 초과할 수 없습니다.")
         self.data.append(book)
         self.save_all()
+        return book
 
     def get_next_id(self):
         if not self.data:
@@ -81,6 +83,11 @@ class BooksRepository(BaseRepository):
     def find_by_isbn(self, isbn: str) -> List[Book]:
         return [b for b in self.data if b.isbn == isbn]
 
+    def find_by_id(self, book_id: str) -> Book | None:
+        for b in self.data:
+            if b.book_id == book_id:
+                return b
+        return None
 
 class BorrowRepository(BaseRepository):
     def __init__(self, path: str):
@@ -115,11 +122,13 @@ class ISBNRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=4, factory_from_fields=ISBN.from_fields)
 
-    def insert(self, isbn_obj: ISBN) -> None:
+    def insert(self, title, author, cat_id) -> ISBN:
+        isbn_obj = ISBN(isbn=self.get_next_id(), title=title, author=author, cat_id=cat_id)
         if len(self.data) >= 20:
             raise RuntimeError("레코드 수가 20개를 초과할 수 없습니다.")
         self.data.append(isbn_obj)
         self.save_all()
+        return isbn_obj
 
     def delete(self, isbn: str) -> None:
         self.data = [item for item in self.data if item.isbn != isbn]
@@ -155,10 +164,10 @@ class ISBNRepository(BaseRepository):
 
     def get_next_id(self) -> str:
         """
-        ISBN을 'ISBN001' 형태로 자동 증가시키고 싶을 때 사용할 수 있는 메서드.
+        ISBN을 'ISBN01' 형태로 자동 증가시키고 싶을 때 사용할 수 있는 메서드.
         """
         if not self.data:
-            return "ISBN001"
+            return "ISBN01"
 
         # ISBN 접두사 제거 후 숫자만 추출
         numeric_ids = []
@@ -169,16 +178,23 @@ class ISBNRepository(BaseRepository):
                 numeric_ids.append(int(num))
 
         if not numeric_ids:
-            return "ISBN001"
+            return "ISBN01"
 
         next_num = max(numeric_ids) + 1
-        return f"ISBN{next_num:03d}"
+        return f"ISBN{next_num:02d}"
 
     def find_by_isbn(self, isbn: str) -> ISBN | None:
         for item in self.data:
             if item.isbn == isbn:
                 return item
         return None
+
+    def find_by_title_and_author(self, title, author):
+        for item in self.data:
+            if item.title == title and item.author == author:
+                return item
+        return None
+
 
 class CategoryRepository(BaseRepository):
     """
