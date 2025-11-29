@@ -1,7 +1,7 @@
 import os
 from typing import Callable, List, Any, Iterable, Dict
 
-from src.repository.entity import User, Book, Borrow, BorrowHistory
+from src.repository.entity import User, Book, Borrow, BorrowHistory, ISBN
 
 
 class BaseRepository:
@@ -95,3 +95,70 @@ class BorrowHistoryRepository(BaseRepository):
         self.data.append(borrow_history)
         self.save_all()
 
+
+
+class ISBNRepository(BaseRepository):
+    """
+    isbn.txt 파일을 관리하는 저장소 클래스
+    형식: isbn|title|author|cat_id
+    필드수: 4
+    """
+    def __init__(self, path: str):
+        super().__init__(path, expected_fields=4, factory_from_fields=ISBN.from_fields)
+
+    def insert(self, isbn_obj: ISBN) -> None:
+        self.data.append(isbn_obj)
+        self.save_all()
+
+    def delete(self, isbn: str) -> None:
+        self.data = [item for item in self.data if item.isbn != isbn]
+        self.save_all()
+
+    def modify(self, isbn: str, new_title: str = None, new_author: str = None, new_cat_id: str = None) -> None:
+        for item in self.data:
+            if item.isbn == isbn:
+                if new_title is not None:
+                    item.title = new_title
+                if new_author is not None:
+                    item.author = new_author
+                if new_cat_id is not None:
+                    item.cat_id = new_cat_id
+                break
+        self.save_all()
+
+    def find(self, isbn: str) -> ISBN | None:
+        for item in self.data:
+            if item.isbn == isbn:
+                return item
+        return None
+
+    def find_by_title(self, keyword: str) -> List[ISBN]:
+        keyword_lower = keyword.lower()
+        return [item for item in self.data if keyword_lower in item.title.lower()]
+
+    def find_by_category(self, cat_id: str) -> List[ISBN]:
+        """
+        카테고리 ID 기준 검색
+        """
+        return [item for item in self.data if item.cat_id == cat_id]
+
+    def get_next_id(self) -> str:
+        """
+        ISBN을 'ISBN001' 형태로 자동 증가시키고 싶을 때 사용할 수 있는 메서드.
+        """
+        if not self.data:
+            return "ISBN001"
+
+        # ISBN 접두사 제거 후 숫자만 추출
+        numeric_ids = []
+        for item in self.data:
+            # 예: ISBN01 → 1
+            num = ''.join(ch for ch in item.isbn if ch.isdigit())
+            if num.isdigit():
+                numeric_ids.append(int(num))
+
+        if not numeric_ids:
+            return "ISBN001"
+
+        next_num = max(numeric_ids) + 1
+        return f"ISBN{next_num:03d}"
