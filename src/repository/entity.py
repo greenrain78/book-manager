@@ -1,7 +1,8 @@
 from dataclasses import asdict, dataclass
 from typing import List, Dict, Any
 
-from src.vaild.entity import validate_isbn, validate_cat_id, validate_book_title, validate_book_author, validate_book_id
+from src.vaild.entity import validate_isbn, validate_cat_id, validate_book_title, validate_book_author, \
+    validate_book_id, validate_cat_name
 
 
 @dataclass
@@ -98,6 +99,25 @@ class ISBN:
 
     def to_fields(self) -> List[str]:
         return [self.isbn, self.title, self.author, self.cat_id]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+@dataclass
+class Category:
+    cat_id: str
+    cat_name: str
+
+    def __post_init__(self):
+        validate_cat_id(value=self.cat_id)
+        validate_cat_name(value=self.cat_name)
+
+    @staticmethod
+    def from_fields(fields: List[str]) -> "Category":
+        return Category(cat_id=fields[0], cat_name=fields[1])
+
+    def to_fields(self) -> List[str]:
+        return [self.cat_id, self.cat_name]
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

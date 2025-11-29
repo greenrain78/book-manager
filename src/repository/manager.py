@@ -1,7 +1,7 @@
 import os
 from typing import Callable, List, Any, Iterable, Dict
 
-from src.repository.entity import User, Book, Borrow, BorrowHistory, ISBN
+from src.repository.entity import User, Book, Borrow, BorrowHistory, ISBN, Category
 
 
 class BaseRepository:
@@ -73,6 +73,9 @@ class BooksRepository(BaseRepository):
     def delete(self, book_id: str) -> None:
         self.data = [b for b in self.data if b.book_id != book_id]
         self.save_all()
+
+    def find_by_isbn(self, isbn: str) -> List[Book]:
+        return [b for b in self.data if b.isbn == isbn]
 
 
 class BorrowRepository(BaseRepository):
@@ -162,3 +165,44 @@ class ISBNRepository(BaseRepository):
 
         next_num = max(numeric_ids) + 1
         return f"ISBN{next_num:03d}"
+
+    def find_by_isbn(self, isbn: str) -> ISBN | None:
+        for item in self.data:
+            if item.isbn == isbn:
+                return item
+        return None
+
+class CategoryRepository(BaseRepository):
+    """
+    categories.txt 관리용 저장소
+    필드수: 2
+    형식: cat_id|cat_name
+    """
+
+    def __init__(self, path: str):
+        super().__init__(path, expected_fields=2, factory_from_fields=Category.from_fields)
+
+    def insert(self, category: Category) -> None:
+        self.data.append(category)
+        self.save_all()
+
+    def delete(self, cat_id: str) -> None:
+        self.data = [item for item in self.data if item.cat_id != cat_id]
+        self.save_all()
+
+    def modify(self, cat_id: str, new_name: str) -> None:
+        for item in self.data:
+            if item.cat_id == cat_id:
+                item.cat_name = new_name
+                break
+        self.save_all()
+
+    def find(self, cat_id: str) -> Category | None:
+        for item in self.data:
+            if item.cat_id == cat_id:
+                return item
+        return None
+
+    def find_by_name(self, keyword: str):
+        keyword_lower = keyword.lower()
+        return [item for item in self.data if keyword_lower in item.cat_name.lower()]

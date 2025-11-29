@@ -38,3 +38,8 @@ def validate_book_id(value: str) -> None:
     pattern = r'^[0-9]{3}$'
     if not re.match(pattern, value):
         raise ValueError(f"Invalid book ID format: {value!r}")
+
+def validate_cat_name(value: str) -> None:
+    pattern = r'^[a-z]+$'
+    if not re.match(pattern, value):
+        raise ValueError(f"Invalid category name format: {value!r}")
