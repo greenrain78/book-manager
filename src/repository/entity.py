@@ -10,13 +10,14 @@ class User:
     user_id: str
     pw: str
     email: str
+    penaltyDate: str
 
     @staticmethod
     def from_fields(fields: List[str]) -> "User":
-        return User(user_id=fields[0], pw=fields[1], email=fields[2])
+        return User(user_id=fields[0], pw=fields[1], email=fields[2], penaltyDate=fields[3])
 
     def to_fields(self) -> List[str]:
-        return [self.user_id, self.pw, self.email]
+        return [self.user_id, self.pw, self.email, self.penaltyDate]
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

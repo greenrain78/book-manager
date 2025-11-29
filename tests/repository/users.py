@@ -16,8 +16,8 @@ class TestUsersRepository(unittest.TestCase):
         self.path = self.tmp.name
 
         # 파일 형식: user_id | pw | email
-        self.tmp.write("001|pass123|john@example.com\n")
-        self.tmp.write("002|hello2024|alice@example.com\n")
+        self.tmp.write("001|pass123|john@example.com|2025-01-08\n")
+        self.tmp.write("002|hello2024|alice@example.com|2025-02-10\n")
         self.tmp.close()
 
     def tearDown(self):
@@ -43,7 +43,7 @@ class TestUsersRepository(unittest.TestCase):
         """
         repo = UsersRepository(self.path)
 
-        new_user = User(user_id="003", pw="mypw", email="charlie@example.com")
+        new_user = User(user_id="003", pw="mypw", email="charlie@example.com", penaltyDate="2025-03-15")
         repo.insert(new_user)
 
         # 메모리 데이터 확인

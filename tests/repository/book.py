@@ -1,8 +1,7 @@
-import unittest
-import tempfile
 import os
+import tempfile
+import unittest
 
-from src.repository.entity import Book
 from src.repository.manager import BooksRepository
 
 
@@ -42,8 +41,7 @@ class TestBooksRepository(unittest.TestCase):
         """
         repo = BooksRepository(self.path)
 
-        new_book = Book(book_id="003", isbn="ISBN03")
-        repo.insert(new_book)
+        repo.insert(isbn="ISBN03")
 
         self.assertEqual(len(repo.data), 3)
         self.assertEqual(repo.data[-1].isbn, "ISBN03")

@@ -1,8 +1,7 @@
-import unittest
-import tempfile
 import os
+import tempfile
+import unittest
 
-from src.repository.entity import ISBN
 from src.repository.manager import ISBNRepository
 
 
@@ -44,13 +43,7 @@ class TestISBNRepository(unittest.TestCase):
         """
         repo = ISBNRepository(self.path)
 
-        new_item = ISBN(
-            isbn="ISBN03",
-            title="Software Engineering",
-            author="Alice Smith",
-            cat_id="CAT03"
-        )
-        repo.insert(new_item)
+        repo.insert(title="Software Engineering", author="Alice Smith", cat_id="CAT03")
 
         self.assertEqual(len(repo.data), 3)
         self.assertEqual(repo.data[-1].author, "Alice Smith")
@@ -157,5 +150,5 @@ class TestISBNRepository(unittest.TestCase):
         next_id = repo.get_next_id()
 
         # 기존: ISBN01, ISBN02 → 다음은 ISBN003
-        self.assertEqual(next_id, "ISBN003")
+        self.assertEqual(next_id, "ISBN03")
 

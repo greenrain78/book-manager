@@ -50,7 +50,7 @@ class BaseRepository:
 
 class UsersRepository(BaseRepository):
     def __init__(self, path: str):
-        super().__init__(path, expected_fields=3, factory_from_fields=User.from_fields)
+        super().__init__(path, expected_fields=4, factory_from_fields=User.from_fields)
 
     def insert(self, user: User) -> None:
         if len(self.data) >= 20:
