@@ -1,6 +1,8 @@
 from dataclasses import asdict, dataclass
 from typing import List, Dict, Any
 
+from src.vaild.entity import validate_isbn, validate_cat_id, validate_book_title, validate_book_author, validate_book_id
+
 
 @dataclass
 class User:
@@ -21,15 +23,18 @@ class User:
 @dataclass
 class Book:
     book_id: str
-    title: str
-    author: str
+    isbn: str
+
+    def __post_init__(self):
+        validate_book_id(value=self.book_id)
+        validate_isbn(value=self.isbn)
 
     @staticmethod
     def from_fields(fields: List[str]) -> "Book":
-        return Book(book_id=fields[0], title=fields[1], author=fields[2])
+        return Book(book_id=fields[0], isbn=fields[1])
 
     def to_fields(self) -> List[str]:
-        return [self.book_id, self.title, self.author]
+        return [self.book_id, self.isbn]
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -68,6 +73,31 @@ class BorrowHistory:
 
     def to_fields(self) -> List[str]:
         return [self.book_id, self.user_id, self.borrow_date, self.due_date, self.return_date]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class ISBN:
+    isbn: str
+    title: str
+    author: str
+    cat_id: str
+
+    def __post_init__(self):
+        # 각 필드에 대한 유효성 검사 수행
+        validate_isbn(value=self.isbn)
+        validate_cat_id(value=self.cat_id)
+        validate_book_title(value=self.title)
+        validate_book_author(value=self.author)
+
+    @staticmethod
+    def from_fields(fields: List[str]) -> "ISBN":
+        return ISBN(isbn=fields[0], title=fields[1], author=fields[2], cat_id=fields[3])
+
+    def to_fields(self) -> List[str]:
+        return [self.isbn, self.title, self.author, self.cat_id]
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

@@ -58,7 +58,7 @@ class UsersRepository(BaseRepository):
 
 class BooksRepository(BaseRepository):
     def __init__(self, path: str):
-        super().__init__(path, expected_fields=3, factory_from_fields=Book.from_fields)
+        super().__init__(path, expected_fields=2, factory_from_fields=Book.from_fields)
 
     def insert(self, book: Book) -> None:
         self.data.append(book)
@@ -74,13 +74,6 @@ class BooksRepository(BaseRepository):
         self.data = [b for b in self.data if b.book_id != book_id]
         self.save_all()
 
-    def modify(self, book_id: str, new_title: str, new_author: str) -> None:
-        for book in self.data:
-            if book.book_id == book_id:
-                book.title = new_title
-                book.author = new_author
-                break
-        self.save_all()
 
 class BorrowRepository(BaseRepository):
     def __init__(self, path: str):
