@@ -1,7 +1,8 @@
 import logging
 
 from src.context import AppContext
-from src.prompt.start import date_input_prompt, main_prompt
+from src.controller.navi import NavigationController
+from src.prompt.start import date_input_prompt
 
 logging.basicConfig(
     level=logging.DEBUG,                       # 로그 레벨 (DEBUG 이상 기록)
@@ -19,5 +20,5 @@ if __name__ == '__main__':
     # 날짜 입력
     date_input_prompt(app=app)
     # 메인 프롬프트
-    app.start()
+    NavigationController(app=app).start()
     log.debug(f"==================== 프로그램 종료 ====================")

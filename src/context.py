@@ -2,18 +2,10 @@ from datetime import timedelta
 from logging import getLogger
 from typing import Optional
 
-from src.controller.prompt import PromptType
 from src.core.valid import check_disk_space
-from src.prompt.admin import add_book_prompt
-from src.prompt.menu import main_prompt, admin_prompt
-from src.prompt.search import search_by_book_prompt
-from src.prompt.start import login_prompt, signup_prompt
-from src.prompt.user import user_prompt, search_prompt
 from src.repository.entity import User
 from src.repository.manager import UsersRepository, BooksRepository, BorrowHistoryRepository, BorrowRepository, \
     ISBNRepository, CategoryRepository
-from src.service.book_service import BookService
-from src.service.user_service import UserService
 from src.settings import BORROW_HISTORY_DATA_PATH, BORROW_DATA_PATH, BOOK_DATA_PATH, USER_DATA_PATH, BORROW_PERIOD_DAYS, \
     ISBN_DATA_PATH, CATEGORY_DATA_PATH
 
@@ -31,22 +23,12 @@ class AppContext:
         self.check_system_requirements()
         # 리포지토리 초기화
         try:
-            users_repo: UsersRepository = UsersRepository(path=USER_DATA_PATH)
-            books_repo: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
-            borrow_repo: BorrowRepository = BorrowRepository(path=BORROW_DATA_PATH)
-            borrow_history_repo: BorrowHistoryRepository = BorrowHistoryRepository(path=BORROW_HISTORY_DATA_PATH)
-            isbn_repo: ISBNRepository = ISBNRepository(path=ISBN_DATA_PATH)
-            cat_repo: CategoryRepository = CategoryRepository(path=CATEGORY_DATA_PATH)
-
-            self.book_service = BookService(
-                books_repo=books_repo,
-                isbn_repo=isbn_repo,
-                cat_repo=cat_repo,
-                borrow_repo=borrow_repo
-            )
-            self.user_service = UserService(
-                user_repo=users_repo,
-            )
+            self.users_repo: UsersRepository = UsersRepository(path=USER_DATA_PATH)
+            self.books_repo: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
+            self.borrow_repo: BorrowRepository = BorrowRepository(path=BORROW_DATA_PATH)
+            self.borrow_history_repo: BorrowHistoryRepository = BorrowHistoryRepository(path=BORROW_HISTORY_DATA_PATH)
+            self.isbn_repo: ISBNRepository = ISBNRepository(path=ISBN_DATA_PATH)
+            self.cat_repo: CategoryRepository = CategoryRepository(path=CATEGORY_DATA_PATH)
         except RuntimeError as e:
             self.exit_with_error(e)
 
@@ -78,54 +60,3 @@ class AppContext:
         input("Press Enter to continue...") # 사용자에게 메시지를 읽을 시간을 줌
         raise SystemExit
 
-    def start(self):
-        next_prompt = PromptType.MAIN_MENU
-
-        while True:
-            if next_prompt == PromptType.USER_MENU:
-                next_prompt = user_prompt()
-
-            elif next_prompt == PromptType.SEARCH_MENU:
-                next_prompt = search_prompt()
-
-            elif next_prompt == PromptType.SEARCH_BOOK:
-                search_by_book_prompt(service=self.book_service)
-                next_prompt = PromptType.SEARCH_MENU
-
-            elif next_prompt == PromptType.EXIT:
-                break
-
-            elif next_prompt == PromptType.MAIN_MENU:
-                next_prompt = main_prompt()
-
-            elif next_prompt == PromptType.LOGIN:
-                next_prompt = login_prompt(user_service=self.user_service, app=self)
-
-            elif next_prompt == PromptType.SIGNUP:
-                next_prompt = signup_prompt(user_service=self.user_service)
-
-            elif next_prompt == PromptType.ADMIN_MENU:
-                next_prompt = admin_prompt()
-
-            elif next_prompt == PromptType.ADMIN_BOOK_ADD:
-                add_book_prompt(book_service=self.book_service)
-                next_prompt = PromptType.ADMIN_MENU
-
-
-            # elif next_prompt == PromptType.SEARCH_CATEGORY:
-            #     search_by_category_prompt()
-            #     next_prompt = PromptType.SEARCH_MENU
-            #
-            # elif next_prompt == PromptType.BORROW:
-            #     self.main_controller.book_borrow()
-            #     next_prompt = PromptType.USER_MENU
-            #
-            # elif next_prompt == PromptType.RETURN:
-            #     self.main_controller.book_return()
-            #     next_prompt = PromptType.USER_MENU
-            #
-            # elif next_prompt == PromptType.LOGOUT:
-            #     self.main_controller.user_logout()
-            #     break
-
-        log.info("프로그램을 종료합니다.")

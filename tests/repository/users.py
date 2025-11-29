@@ -62,7 +62,7 @@ class TestUsersRepository(unittest.TestCase):
         invalid_tmp = tempfile.NamedTemporaryFile(delete=False, mode="w+")
         path = invalid_tmp.name
 
-        # expected_fields=3인데 필드가 2개뿐
+        # expected_fields=4인데 필드가 2개뿐
         invalid_tmp.write("001|only_pw\n")
         invalid_tmp.close()
 

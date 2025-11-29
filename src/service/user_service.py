@@ -1,14 +1,12 @@
+from src.context import AppContext
 from src.repository.entity import User
 from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository, BorrowRepository, \
     UsersRepository
 
 
 class UserService:
-    def __init__(
-            self,
-            user_repo: UsersRepository,
-    ):
-        self.users: UsersRepository = user_repo
+    def __init__(self, app: AppContext):
+        self.users: UsersRepository = app.users_repo
 
 
     def can_signed_in(self) -> bool:

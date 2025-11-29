@@ -1,9 +1,10 @@
 from src.core.valid import input_with_validation
 from src.service.book_service import BookService
-from src.vaild.user import is_valid_book_title, exist_book_title
+from src.service.borrow_service import BorrowService
+from src.vaild.user import is_valid_book_title
 
 
-def search_by_book_prompt(service: BookService):
+def search_by_book_prompt(book_service: BookService, borrow_service: BorrowService) -> None:
     while True:
         keyword = input_with_validation(
             "검색할 책 제목을 입력하세요 : ",
@@ -19,17 +20,17 @@ def search_by_book_prompt(service: BookService):
         if keyword:
             break
 
-    isbns = service.search_isbn_by_title(keyword=keyword)
+    isbns = book_service.search_isbn_by_title(keyword=keyword)
     if isbns is None or len(isbns) == 0:
         print("목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요.")
         return None
 
     for isbn in isbns:
-        books = service.search_books_by_isbn(isbn=isbn.isbn)
-        category = service.search_category(cat_id=isbn.cat_id)
+        books = book_service.search_books_by_isbn(isbn=isbn.isbn)
+        category = book_service.search_category(cat_id=isbn.cat_id)
         isbn.category = category.name if category else "알수없음"
         for book in books:
-            if service.is_book_borrowed(book.book_id):
+            if borrow_service.is_book_borrowed(book.book_id):
                 print(f"대출중 | {book.book_id} | {isbn.title} | {isbn.author} | {category}")
             else:
                 print(f"대여가능 | {book.book_id} | {isbn.title} | {isbn.author} | {category}")

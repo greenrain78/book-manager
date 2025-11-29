@@ -1,18 +1,14 @@
+from src.context import AppContext
 from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository, BorrowRepository
 
 
 class BookService:
-    def __init__(
-            self,
-            books_repo: BooksRepository,
-            isbn_repo: ISBNRepository,
-            cat_repo: CategoryRepository,
-            borrow_repo: BorrowRepository
-    ):
-        self.books: BooksRepository = books_repo
-        self.isbn_repo: ISBNRepository = isbn_repo
-        self.cat_repo: CategoryRepository = cat_repo
-        self.borrow_repo: BorrowRepository = borrow_repo
+    def __init__(self, app: AppContext):
+        self.app = app
+        self.books: BooksRepository = app.books_repo
+        self.isbn_repo: ISBNRepository = app.isbn_repo
+        self.cat_repo: CategoryRepository = app.cat_repo
+        self.borrow_repo: BorrowRepository = app.borrow_repo
 
     # 도서 추가
     def add_book(self, title: str, author: str) -> None:
@@ -29,7 +25,7 @@ class BookService:
         if not book:
             raise ValueError("해당 도서를 찾을 수 없습니다.")
         # 도서가 대출중인지 확인
-        if self.is_book_borrowed(book_id):
+        if self.app.borrow_service.is_book_borrowed(book_id=book_id):
             raise RuntimeError("대출중인 도서는 삭제할 수 없습니다.")
         # 도서 삭제
         self.books.delete(book_id)
@@ -76,10 +72,3 @@ class BookService:
         for isbn_obj in matched_isbns:
             matched_books.extend(self.books.find_by_isbn(isbn_obj.isbn))
         return matched_books
-
-    # 대출중인지 확인
-    def is_book_borrowed(self, book_id: str) -> bool:
-        for borrow in self.borrow_repo.data:
-            if borrow.book_id == book_id:
-                return True
-        return False

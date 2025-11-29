@@ -11,3 +11,5 @@ CATEGORY_DATA_PATH = "data/category.txt"
 ADMIN_WORDS = ["admin", "root", "system", "guest"]
 # 도서
 BORROW_PERIOD_DAYS = 7  # 대출 기간: 7일
+
+MAX_BORROWED_BOOKS = 3  # 최대 대출 권수: 3권
