@@ -18,15 +18,21 @@ def search_by_book_prompt(service: BookService):
         )
         if keyword:
             break
-    results = service.search_book_by_title(title_keyword=keyword)
-    if results is None:
-        print("목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요.")
 
-    for book in results:
-        if any(borrow.book_id == book.book_id for borrow in app.borrow.data):
-            print(f"대출중 | {book.book_id}")
-        else:
-            print(f"대여가능 | {book.book_id}")
+    isbns = service.search_isbn_by_title(keyword=keyword)
+    if isbns is None or len(isbns) == 0:
+        print("목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요.")
+        return None
+
+    for isbn in isbns:
+        books = service.search_books_by_isbn(isbn=isbn.isbn)
+        category = service.search_category(cat_id=isbn.cat_id)
+        isbn.category = category.name if category else "알수없음"
+        for book in books:
+            if service.is_book_borrowed(book.book_id):
+                print(f"대출중 | {book.book_id} | {isbn.title} | {isbn.author} | {category}")
+            else:
+                print(f"대여가능 | {book.book_id} | {isbn.title} | {isbn.author} | {category}")
     return None
 
 def search_by_category_prompt():

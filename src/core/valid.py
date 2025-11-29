@@ -5,6 +5,21 @@ from typing import Callable, Any
 log = getLogger(__name__)
 
 
+def validate_by_validators(
+    value: Any,
+    validators: list[tuple[Callable[[Any], bool], str]]
+) -> bool:
+    """
+    여러 검증 함수를 적용.
+    - validators: [(검증함수, 실패시 메시지), ...]
+    - 모든 검증을 통과하면 True 반환
+    """
+    for fn, msg in validators:
+        if not fn(value):
+            print(msg)
+            return False
+    return True
+
 def input_with_validation(
     prompt: str,
     validators: list[tuple[Callable[[str], bool], str]],
