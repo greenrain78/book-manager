@@ -53,6 +53,8 @@ class UsersRepository(BaseRepository):
         super().__init__(path, expected_fields=3, factory_from_fields=User.from_fields)
 
     def insert(self, user: User) -> None:
+        if len(self.data) >= 20:
+            raise RuntimeError("레코드 수가 20개를 초과할 수 없습니다.")
         self.data.append(user)
         self.save_all()
 
@@ -61,6 +63,8 @@ class BooksRepository(BaseRepository):
         super().__init__(path, expected_fields=2, factory_from_fields=Book.from_fields)
 
     def insert(self, book: Book) -> None:
+        if len(self.data) >= 20:
+            raise RuntimeError("레코드 수가 20개를 초과할 수 없습니다.")
         self.data.append(book)
         self.save_all()
 
@@ -83,6 +87,8 @@ class BorrowRepository(BaseRepository):
         super().__init__(path, expected_fields=4, factory_from_fields=Borrow.from_fields)
 
     def insert(self, borrow: Borrow) -> None:
+        if len(self.data) >= 20:
+            raise RuntimeError("레코드 수가 20개를 초과할 수 없습니다.")
         self.data.append(borrow)
         self.save_all()
 
@@ -110,6 +116,8 @@ class ISBNRepository(BaseRepository):
         super().__init__(path, expected_fields=4, factory_from_fields=ISBN.from_fields)
 
     def insert(self, isbn_obj: ISBN) -> None:
+        if len(self.data) >= 20:
+            raise RuntimeError("레코드 수가 20개를 초과할 수 없습니다.")
         self.data.append(isbn_obj)
         self.save_all()
 
@@ -183,6 +191,8 @@ class CategoryRepository(BaseRepository):
         super().__init__(path, expected_fields=2, factory_from_fields=Category.from_fields)
 
     def insert(self, category: Category) -> None:
+        if len(self.data) >= 20:
+            raise RuntimeError("레코드 수가 20개를 초과할 수 없습니다.")
         self.data.append(category)
         self.save_all()
 

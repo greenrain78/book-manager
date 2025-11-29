@@ -8,9 +8,8 @@ class NavigationController:
     def __init__(self, book_service: BookService):
         self.book_service = book_service
 
-
     def start(self):
-        next_prompt = PromptType.USER_MENU
+        next_prompt = PromptType.MAIN_MENU
 
         while True:
             if next_prompt == PromptType.USER_MENU:

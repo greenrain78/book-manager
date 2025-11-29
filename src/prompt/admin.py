@@ -1,40 +1,11 @@
 from src.context import AppContext
+from src.controller.prompt import PromptType
 from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.repository.entity import Book
 from src.vaild.user import is_valid_book_title, is_vaild_author, exist_book_id
 
 
-def admin_prompt(app: AppContext) -> None:
-    """
-    :param app:
-    :return:
-    """
-    while True:
-        print(f"Admin")
-        print(f"1. 도서 추가")
-        print(f"2. 도서 삭제")
-        print(f"3. 도서 수정")
-        print(f"4. 로그아웃")
-        choice = input("명령어를 입력하세요: ").strip()
-        if choice == '1':
-            print("도서 추가 선택")
-            add_book_prompt(app=app)
-        elif choice == '2':
-            print("도서 삭제 선택")
-            delete_book_prompt(app=app)
-        elif choice == '3':
-            print("도서 수정 선택")
-            modify_book_prompt(app=app)
-        elif choice == '4':
-            confirm = yes_no_prompt(f"정말 로그아웃하시겠습니까? (Y/N):")
-            if confirm:
-                break
-        else:
-            print("입력에 해당하는 명령어가 없습니다. 다시 입력해 주세요.")
-
-    # 로그아웃 처리 - main prompt로 복귀
-    return None
 
 def add_book_prompt(app: AppContext) -> None:
     """

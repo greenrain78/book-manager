@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 
-from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository
+from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository, BorrowRepository
 from src.service.book_service import BookService
 
 """
@@ -13,19 +13,16 @@ class TestBookServiceIntegration(unittest.TestCase):
 
     def setUp(self):
         # 임시 파일 생성
-        self.books = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.books = tempfile.NamedTemporaryFile(delete=False, mode="w+")
         self.path1 = self.books.name
-        self.isbn = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.isbn = tempfile.NamedTemporaryFile(delete=False, mode="w+")
         self.path2 = self.isbn.name
-        self.categories = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.categories = tempfile.NamedTemporaryFile(delete=False, mode="w+")
         self.path3 = self.categories.name
+        self.borrows = tempfile.NamedTemporaryFile(delete=False, mode="w+")
+        self.path4 = self.borrows.name
 
         # 테스트용 초기 데이터 작성
-        # expected_fields = 3 → book_id | title | author
-        # books.txt에    007|ISBN07
-        # ISBN.txt에 	ISBN07|Computer Science|Elon␣musk|CAT01
-        # categories.txt에	 CAT01|computer
-
         self.books.write("007|ISBN07\n")
         self.books.close()
         self.isbn.write("ISBN07|Computer Science|Elon musk|CAT01\n")
@@ -37,8 +34,9 @@ class TestBookServiceIntegration(unittest.TestCase):
         self.book_repo = BooksRepository(self.path1)
         self.isbn_repo = ISBNRepository(self.path2)
         self.cat_repo = CategoryRepository(self.path3)
+        self.borrow_repo = BorrowRepository(self.path4)
 
-        self.service = BookService(self.book_repo, self.isbn_repo, self.cat_repo)
+        self.service = BookService(self.book_repo, self.isbn_repo, self.cat_repo, self.borrow_repo)
 
 
     def tearDown(self):
@@ -113,12 +111,10 @@ class TestBookServiceIntegration(unittest.TestCase):
         - 출력: []
         """
         result = self.service.search_book_by_title("Computer Graphics")
-
         self.assertEqual(result, [])
 
     def test_search_book_by_title_not_exist_cases(self):
         """
-        문서 6.2.1.1-d
         존재하지 않는 도서 입력 → 결과 없음([])
         케이스:
             - "Computer Graphics"
