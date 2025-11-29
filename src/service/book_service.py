@@ -8,6 +8,8 @@ class BookService:
         self.cat_repo: CategoryRepository = cat_repo
 
     def search_book_by_title(self, keyword) -> list:
+        if not keyword:
+            return []
         # 키워드로 isbn_repo에서 도서 검색
         # 다시 books_repo에서 book_id로 도서 정보 가져오기
         matched_isbns = self.isbn_repo.find_by_title(keyword)

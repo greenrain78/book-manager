@@ -69,6 +69,21 @@ class TestBookServiceIntegration(unittest.TestCase):
         self.assertEqual(isbn.author, "Elon musk")
         self.assertEqual(isbn.cat_id, "CAT01")
 
+    def test_search_book_by_title_case_insensitive_match(self):
+        """
+        대소문자 무시 검색
+        Document Case:
+        - 입력: "computer science", "COMPUTER SCIENCE"
+        """
+        result1 = self.service.search_book_by_title("computer science")
+        result2 = self.service.search_book_by_title("COMPUTER SCIENCE")
+
+        self.assertEqual(len(result1), 1)
+        self.assertEqual(len(result2), 1)
+
+        self.assertEqual(result1[0].book_id, "007")
+        self.assertEqual(result2[0].book_id, "007")
+
     def test_search_book_by_title_partial_match(self):
         """
         부분 일치 검색
@@ -90,22 +105,6 @@ class TestBookServiceIntegration(unittest.TestCase):
         self.assertEqual(len(result3), 1)
         self.assertEqual(result3[0].book_id, "007")
 
-    def test_search_book_by_title_case_insensitive_match(self):
-        """
-        대소문자 무시 검색
-        Document Case:
-        - 입력: "computer science", "COMPUTER SCIENCE"
-        """
-        result1 = self.service.search_book_by_title("computer science")
-        result2 = self.service.search_book_by_title("COMPUTER SCIENCE")
-
-        self.assertEqual(len(result1), 1)
-        self.assertEqual(len(result2), 1)
-
-        self.assertEqual(result1[0].book_id, "007")
-        self.assertEqual(result2[0].book_id, "007")
-
-
     def test_search_book_by_title_not_found(self):
         """
         존재하지 않는 도서 검색
@@ -114,14 +113,28 @@ class TestBookServiceIntegration(unittest.TestCase):
         - 출력: []
         """
         result = self.service.search_book_by_title("Computer Graphics")
-        self.assertEqual(result, [])
-
-
-    def test_search_book_by_title_special_character(self):
-        """
-        특수문자 포함 검색 → 일치하는 title이 없으므로 결과 없음
-        문서 기준: 입력 단계에서 막아야 하지만 서비스는 단순 검색 기능
-        """
-        result = self.service.search_book_by_title("Science!")
 
         self.assertEqual(result, [])
+
+    def test_search_book_by_title_not_exist_cases(self):
+        """
+        문서 6.2.1.1-d
+        존재하지 않는 도서 입력 → 결과 없음([])
+        케이스:
+            - "Computer Graphics"
+            - "1"
+            - "0"
+            - "Computer Science2"
+        """
+
+        inputs = [
+            "Computer Graphics",
+            "1",
+            "0",
+            "Computer Science2",
+        ]
+
+        for keyword in inputs:
+            with self.subTest(keyword=keyword):
+                result = self.service.search_book_by_title(keyword)
+                self.assertEqual(result, [], f"입력값 '{keyword}' 에 대해 결과가 [] 이어야 함")
