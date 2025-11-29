@@ -11,6 +11,8 @@ class TestSearchPrompt(unittest.TestCase):
 
     def setUp(self):
         class FakeController(SearchController):
+            def __init__(self):
+                super().__init__(app=None)
             def search(self):
                 print("Search called")
             def search_by_category(self):

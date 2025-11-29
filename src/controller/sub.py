@@ -1,3 +1,7 @@
+from src.prompt.search import search_by_book_prompt
+from src.service.book_service import BookService
+
+
 class MainController:
     def __init__(self):
         pass
@@ -13,11 +17,11 @@ class MainController:
         pass
 
 class SearchController:
-    def __init__(self):
-        pass
+    def __init__(self, app):
+        self.book_service = BookService(app)
 
     def search(self):
-        pass
+        search_by_book_prompt(service=self.book_service)
 
     def search_by_category(self):
         pass
