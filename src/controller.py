@@ -11,3 +11,13 @@ class MainController:
         pass
     def user_logout(self):
         pass
+
+class SearchController:
+    def __init__(self):
+        pass
+
+    def search(self):
+        pass
+
+    def search_by_category(self):
+        pass

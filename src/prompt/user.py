@@ -1,37 +1,13 @@
 from src.context import AppContext
-from src.controller import MainController
+from src.controller import MainController, SearchController
 from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.repository.entity import Borrow, BorrowHistory
 from src.vaild.user import is_book_borrowed, exist_book_title, is_valid_book_title, exist_book_id, is_vaild_book_id
 
 
-def user_prompt_old(app: AppContext) -> None:
-    while True:
-        print(f"UserPrompt")
-        print(f"1. 검색")
-        print(f"2. 대출")
-        print(f"3. 반납")
-        print(f"4. 로그아웃")
-        choice = input("명령어를 입력하세요: ").strip()
-        if choice == '1':
-            search_prompt(app=app)
-        elif choice == '2':
-            borrow_prompt(app=app)
-        elif choice == '3':
-            return_prompt(app=app)
-        elif choice == '4':
-            confirm = yes_no_prompt(f"정말 로그아웃하시겠습니까? (Y/N):")
-            if confirm:
-                break
-        else:
-            print("잘못된 입력입니다!! 1,2,3,4 중 하나를 입력하세요.")
 
-    # 로그아웃 처리 - main prompt로 복귀
-    return None
-
-
-def user_prompt(controller:MainController) -> None:
+def user_prompt(controller: MainController) -> None:
     while True:
         print(f"UserPrompt")
         print(f"1. 검색")
@@ -52,34 +28,50 @@ def user_prompt(controller:MainController) -> None:
         else:
             print("잘못된 입력입니다!! 1,2,3,4 중 하나를 입력하세요.")
 
-
-def search_prompt(app: AppContext) -> None:
-
+def search_prompt(controller: SearchController) -> None:
     while True:
-        keyword = input_with_validation(
-            "검색할 책 제목을 입력하세요 : ",
-            [
-                # 알파벳과 숫자 그리고 공백만
-                (lambda v: all(ch.isalnum() or ch.isspace() for ch in v), "제목에는 하이픈(-) 및 기타 특수문자는 포함되어서는 안 됩니다!! 올바른 제목을 입력하세요."),
-                # 공백이 2개 이상 연속으로 포함되어 있는지 검사
-                (lambda v: '  ' not in v, "공백이 너무 많습니다!! 올바른 제목을 입력하세요."),
-                # 정규식
-                (is_valid_book_title, "잘못된 입력입니다!! 올바른 제목을 입력하세요."),
-            ]
-        )
-        if keyword:
-            break
-    if not exist_book_title(app=app, title=keyword):
-        print("목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요.")
-        return None
-
-    results = [book for book in app.books.data if keyword.lower() in book.title.lower()]
-    for book in results:
-        if any(borrow.book_id == book.book_id for borrow in app.borrow.data):
-            print(f"대출중 | {book.book_id}")
+        print(f"검색하고 싶은 종류를 골라주세요.")
+        print(f"1. 도서 검색")
+        print(f"2. 카테고리 검색")
+        choice = input("명령어를 입력하세요: ").strip()
+        if choice == '1':
+            return controller.search()
+        elif choice == '2':
+            return controller.search_by_category()
         else:
-            print(f"대여가능 | {book.book_id}")
-    return None
+            print("잘못된 입력입니다!! 1,2 중 하나를 입력하세요.")
+
+
+
+
+
+# def search_prompt(app: AppContext) -> None:
+#
+#     while True:
+#         keyword = input_with_validation(
+#             "검색할 책 제목을 입력하세요 : ",
+#             [
+#                 # 알파벳과 숫자 그리고 공백만
+#                 (lambda v: all(ch.isalnum() or ch.isspace() for ch in v), "제목에는 하이픈(-) 및 기타 특수문자는 포함되어서는 안 됩니다!! 올바른 제목을 입력하세요."),
+#                 # 공백이 2개 이상 연속으로 포함되어 있는지 검사
+#                 (lambda v: '  ' not in v, "공백이 너무 많습니다!! 올바른 제목을 입력하세요."),
+#                 # 정규식
+#                 (is_valid_book_title, "잘못된 입력입니다!! 올바른 제목을 입력하세요."),
+#             ]
+#         )
+#         if keyword:
+#             break
+#     if not exist_book_title(app=app, title=keyword):
+#         print("목록에 존재하지 않는 도서입니다.!! 올바른 제목을 입력하세요.")
+#         return None
+#
+#     results = [book for book in app.books.data if keyword.lower() in book.title.lower()]
+#     for book in results:
+#         if any(borrow.book_id == book.book_id for borrow in app.borrow.data):
+#             print(f"대출중 | {book.book_id}")
+#         else:
+#             print(f"대여가능 | {book.book_id}")
+#     return None
 
 # 대출
 def borrow_prompt(app: AppContext) -> None:
@@ -147,3 +139,30 @@ def return_prompt(app: AppContext) -> None:
         else:
             print(f"사용자가 반납을 취소했습니다.")
     return None
+
+
+
+#
+# def user_prompt_old(app: AppContext) -> None:
+#     while True:
+#         print(f"UserPrompt")
+#         print(f"1. 검색")
+#         print(f"2. 대출")
+#         print(f"3. 반납")
+#         print(f"4. 로그아웃")
+#         choice = input("명령어를 입력하세요: ").strip()
+#         if choice == '1':
+#             search_prompt(app=app)
+#         elif choice == '2':
+#             borrow_prompt(app=app)
+#         elif choice == '3':
+#             return_prompt(app=app)
+#         elif choice == '4':
+#             confirm = yes_no_prompt(f"정말 로그아웃하시겠습니까? (Y/N):")
+#             if confirm:
+#                 break
+#         else:
+#             print("잘못된 입력입니다!! 1,2,3,4 중 하나를 입력하세요.")
+#
+#     # 로그아웃 처리 - main prompt로 복귀
+#     return None
