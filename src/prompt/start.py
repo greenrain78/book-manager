@@ -71,7 +71,6 @@ def main_prompt(app: AppContext) -> None:
             elif choice == '3':
                 if yes_no_prompt(f"정말 종료하시겠습니까? (Y/N):"):
                     break
-
             else:
                 print("잘못된 입력입니다!! 1,2,3 중 하나를 입력하세요.")
         except Exception as e:
