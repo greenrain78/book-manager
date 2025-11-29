@@ -13,16 +13,16 @@ class AppContext:
     def __init__(self):
         self.current_date = None
         self.current_user: Optional[User] = None
-        # 시스템 요구사항 확인
-        self.check_system_requirements()
-        # 리포지토리 초기화
-        try:
-            self.users: UsersRepository = UsersRepository(path=USER_DATA_PATH)
-            self.books: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
-            self.borrow: BorrowRepository = BorrowRepository(path=BORROW_DATA_PATH)
-            self.borrow_history: BorrowHistoryRepository = BorrowHistoryRepository(path=BORROW_HISTORY_DATA_PATH)
-        except RuntimeError as e:
-            self.exit_with_error(e)
+        # # 시스템 요구사항 확인
+        # self.check_system_requirements()
+        # # 리포지토리 초기화
+        # try:
+        #     self.users: UsersRepository = UsersRepository(path=USER_DATA_PATH)
+        #     self.books: BooksRepository = BooksRepository(path=BOOK_DATA_PATH)
+        #     self.borrow: BorrowRepository = BorrowRepository(path=BORROW_DATA_PATH)
+        #     self.borrow_history: BorrowHistoryRepository = BorrowHistoryRepository(path=BORROW_HISTORY_DATA_PATH)
+        # except RuntimeError as e:
+        #     self.exit_with_error(e)
 
     def check_system_requirements(self):
         # 디스크 공간 확인

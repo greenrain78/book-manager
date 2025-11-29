@@ -1,11 +1,12 @@
 from src.context import AppContext
+from src.controller import MainController
 from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.repository.entity import Borrow, BorrowHistory
 from src.vaild.user import is_book_borrowed, exist_book_title, is_valid_book_title, exist_book_id, is_vaild_book_id
 
 
-def user_prompt(app: AppContext) -> None:
+def user_prompt_old(app: AppContext) -> None:
     while True:
         print(f"UserPrompt")
         print(f"1. 검색")
@@ -28,6 +29,28 @@ def user_prompt(app: AppContext) -> None:
 
     # 로그아웃 처리 - main prompt로 복귀
     return None
+
+
+def user_prompt(controller:MainController) -> None:
+    while True:
+        print(f"UserPrompt")
+        print(f"1. 검색")
+        print(f"2. 대출")
+        print(f"3. 반납")
+        print(f"4. 로그아웃")
+        choice = input("명령어를 입력하세요: ").strip()
+        if choice == '1':
+            return controller.book_search()
+        elif choice == '2':
+            return controller.book_borrow()
+        elif choice == '3':
+            return controller.book_return()
+        elif choice == '4':
+            confirm = yes_no_prompt(f"정말 로그아웃하시겠습니까? (Y/N):")
+            if confirm:
+                return controller.user_logout()
+        else:
+            print("잘못된 입력입니다!! 1,2,3,4 중 하나를 입력하세요.")
 
 
 def search_prompt(app: AppContext) -> None:
