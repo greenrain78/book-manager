@@ -39,6 +39,21 @@ class BookService:
             self.isbn_repo.delete(book.isbn)
         return None
 
+    def modify_book(self, book_id: str, new_title: str = None, new_author: str = None) -> None:
+        book = self.books.find_by_id(book_id)
+        if not book:
+            raise ValueError("해당 도서를 찾을 수 없습니다.")
+        isbn_obj = self.isbn_repo.find(book.isbn)
+        if not isbn_obj:
+            raise ValueError("해당 ISBN 도서를 찾을 수 없습니다.")
+        # ISBN 정보 수정
+        self.isbn_repo.modify(
+            isbn=isbn_obj.isbn,
+            new_title=new_title,
+            new_author=new_author
+        )
+        return None
+
     def search_isbn_by_title(self, keyword: str) -> list:
         return self.isbn_repo.find_by_title(keyword)
 

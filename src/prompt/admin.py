@@ -1,8 +1,7 @@
-from src.context import AppContext
 from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.service.book_service import BookService
-from src.vaild.user import is_valid_book_title, is_vaild_author, exist_book_id
+from src.vaild.user import is_valid_book_title, is_vaild_author
 
 
 def add_book_prompt(book_service) -> None:
@@ -93,10 +92,11 @@ def delete_book_prompt(book_service: BookService) -> None:
 
 
 
-def modify_book_prompt(app: AppContext) -> None:
+
+def modify_book_prompt(book_service: BookService) -> None:
     """
     도서 수정 프롬프트
-    :param app:
+    :param book_service:
     :return:
     """
 
@@ -109,13 +109,13 @@ def modify_book_prompt(app: AppContext) -> None:
                 # 고유번호는 공백을 포함하지 않습니다
                 (lambda v: ' ' not in v, "고유번호는 공백을 포함하지 않습니다"),
                 # 존재하는 도서 ID인지 검사
-                (lambda v: exist_book_id(app=app, book_id=v), "목록에 존재하지 않는 도서입니다.!! 올바른 고유번호를 입력하세요."),
+                (lambda v: book_service.search_book_by_id(book_id=v) is not None, "목록에 존재하지 않는 도서입니다.!! 올바른 고유번호를 입력하세요."),
             ]
         )
         if book_id:
             break
 
-    book = next((b for b in app.books.data if b.book_id == book_id), None)
+    book = book_service.search_book_by_id(book_id=book_id)
     print(f"[수정할 도서 정보]")
     print(f"도서명: {book.title}")
     print(f"저자: {book.author}")
@@ -147,11 +147,73 @@ def modify_book_prompt(app: AppContext) -> None:
     print(f"변경 후: {new_title} {new_author}")
     confirm = yes_no_prompt(f"정말 수정하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
     if confirm:
-        app.books.modify(book_id=book_id, new_title=new_title, new_author=new_author)
+        book_service.modify_book(book_id=book_id, new_title=new_title, new_author=new_author)
         print(f"해당 도서를 수정했습니다.")
     else:
         print(f"해당 도서를 수정하지 않았습니다.")
     return None
+
+
+
+# def modify_book_prompt1(app: AppContext) -> None:
+#     """
+#     도서 수정 프롬프트
+#     :param app:
+#     :return:
+#     """
+#
+#     while True:
+#         book_id = input_with_validation(
+#             "수정할 도서의 고유번호(BookId)를 입력하세요:",
+#             [
+#                 # 고유번호는 숫자 3자리 입니다. EX:001,011,111
+#                 (lambda v: v.isdigit() and len(v) == 3, "고유번호는 숫자 3자리 입니다. EX:001,011,111"),
+#                 # 고유번호는 공백을 포함하지 않습니다
+#                 (lambda v: ' ' not in v, "고유번호는 공백을 포함하지 않습니다"),
+#                 # 존재하는 도서 ID인지 검사
+#                 (lambda v: exist_book_id(app=app, book_id=v), "목록에 존재하지 않는 도서입니다.!! 올바른 고유번호를 입력하세요."),
+#             ]
+#         )
+#         if book_id:
+#             break
+#
+#     book = next((b for b in app.books.data if b.book_id == book_id), None)
+#     print(f"[수정할 도서 정보]")
+#     print(f"도서명: {book.title}")
+#     print(f"저자: {book.author}")
+#
+#     # 수정된 도서
+#     while True:
+#         modified_book = input_with_validation(
+#             "새로운 도서명과 저자를 [도서명 “|” 저자] 형식으로 입력하세요:",
+#             [
+#                 # 정확히 ' | ' 구분자 1개만 허용
+#                 (lambda s: s.count("|") == 1, "[도서명 | 저자] 형식으로 입력해주세요."),
+#                 # 제목/저자 모두 비어 있지 않아야 함
+#                 (lambda s: all(p.strip() for p in s.split("|", 1)),
+#                  "도서명과 저자는 각각 1자 이상이어야 합니다. 다시 입력해주세요."),
+#                 # 도서명 유효성 검사
+#                 (lambda s: is_valid_book_title(s.split("|", 1)[0]),
+#                  "잘못된 입력입니다!! 올바른 제목을 입력하세요."),
+#                 # 저자명 유효성 검사
+#                 (lambda s: is_vaild_author(s.split("|", 1)[1]),
+#                  "잘못된 입력입니다!! 올바른 저자를 입력하세요."),
+#             ]
+#         )
+#         if modified_book:
+#             break
+#
+#     new_title, new_author = [part.strip() for part in modified_book.split("|", 1)]
+#
+#     print(f"변경 전: {book.title} {book.author}")
+#     print(f"변경 후: {new_title} {new_author}")
+#     confirm = yes_no_prompt(f"정말 수정하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
+#     if confirm:
+#         app.books.modify(book_id=book_id, new_title=new_title, new_author=new_author)
+#         print(f"해당 도서를 수정했습니다.")
+#     else:
+#         print(f"해당 도서를 수정하지 않았습니다.")
+#     return None
 
 
 

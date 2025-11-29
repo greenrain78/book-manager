@@ -4,7 +4,8 @@ from typing import Optional
 
 from src.controller.prompt import PromptType
 from src.core.valid import check_disk_space
-from src.prompt.menu import main_prompt
+from src.prompt.admin import add_book_prompt
+from src.prompt.menu import main_prompt, admin_prompt
 from src.prompt.search import search_by_book_prompt
 from src.prompt.start import login_prompt, signup_prompt
 from src.prompt.user import user_prompt, search_prompt
@@ -102,6 +103,13 @@ class AppContext:
 
             elif next_prompt == PromptType.SIGNUP:
                 next_prompt = signup_prompt(user_service=self.user_service)
+
+            elif next_prompt == PromptType.ADMIN_MENU:
+                next_prompt = admin_prompt()
+
+            elif next_prompt == PromptType.ADMIN_BOOK_ADD:
+                add_book_prompt(book_service=self.book_service)
+                next_prompt = PromptType.ADMIN_MENU
 
 
             # elif next_prompt == PromptType.SEARCH_CATEGORY:

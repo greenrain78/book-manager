@@ -3,8 +3,7 @@ import unittest
 from io import StringIO
 from unittest.mock import patch
 
-from src.prompt.menu import admin_prompt
-from src.prompt.user import user_prompt, search_prompt
+from src.prompt.menu import admin_prompt, user_prompt, search_prompt
 
 
 class TestUserPrompt(unittest.TestCase):
