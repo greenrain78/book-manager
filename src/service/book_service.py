@@ -77,6 +77,9 @@ class BookService:
                 "status": "대출중" if self.borrow_service.is_book_borrowed(book.book_id) else "대여가능"
             })
         return result
+    def search_isbn(self, isbn: str) -> ISBN | None:
+        return self.isbn_repo.find(isbn)
+
     def search_category(self, cat_id: str) -> Category | None:
         return self.cat_repo.find(cat_id)
 

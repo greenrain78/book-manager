@@ -48,6 +48,7 @@ class BaseRepository:
                 self._validate_line_common(raw)
                 fp.write(raw + "\r\n")
 
+
 class UsersRepository(BaseRepository):
     def __init__(self, path: str):
         super().__init__(path, expected_fields=4, factory_from_fields=User.from_fields)
