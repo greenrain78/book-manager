@@ -3,9 +3,11 @@ from logging import getLogger
 from src.context import AppContext
 from src.controller.prompt import PromptType
 from src.prompt.admin import add_book_prompt, modify_book_prompt, delete_book_prompt
+from src.prompt.category import add_category_prompt, delete_category_prompt, modify_category_prompt, merge_category_prompt, assign_category_prompt
 from src.prompt.menu import user_prompt, search_prompt, main_prompt, admin_prompt
 from src.prompt.search import search_by_book_prompt, search_by_category_prompt
 from src.prompt.start import login_prompt, signup_prompt
+from src.prompt.user import borrow_prompt, return_prompt
 
 log = getLogger(__name__)
 
@@ -52,8 +54,10 @@ def handle_prompt(app: AppContext, prompt_type: PromptType) -> PromptType:
         return PromptType.MAIN_MENU
 
     elif prompt_type == PromptType.BOOK_BORROW:
+        borrow_prompt(book_service=app.book_service, borrow_service=app.borrow_service)
         return PromptType.USER_MENU
     elif prompt_type == PromptType.BOOK_RETURN:
+        return_prompt(book_service=app.book_service, borrow_service=app.borrow_service)
         return PromptType.USER_MENU
 
     elif prompt_type == PromptType.ADMIN_BOOK_MODIFY:
@@ -67,19 +71,19 @@ def handle_prompt(app: AppContext, prompt_type: PromptType) -> PromptType:
         return PromptType.ADMIN_MENU
 
     elif prompt_type == PromptType.CATEGORY_ADD:
-        #todo: 카테고리 추가 프롬프트 함수 구현 필요
+        add_category_prompt(cat_service=app.cat_service)
         return PromptType.CATEGORY_MENU
     elif prompt_type == PromptType.CATEGORY_DELETE:
-        #todo: 카테고리 삭제 프롬프트 함수 구현 필요
+        delete_category_prompt(cat_service=app.cat_service)
         return PromptType.CATEGORY_MENU
     elif prompt_type == PromptType.CATEGORY_MERGE:
-        #todo: 카테고리 병합 프롬프트 함수 구현 필요
+        merge_category_prompt(cat_service=app.cat_service)
         return PromptType.CATEGORY_MENU
     elif prompt_type == PromptType.CATEGORY_MODIFY:
-        #todo: 카테고리 수정 프롬프트 함수 구현 필요
+        modify_category_prompt(cat_service=app.cat_service)
         return PromptType.CATEGORY_MENU
     elif prompt_type == PromptType.CATEGORY_ASSIGN:
-        #todo: 카테고리 부여 프롬프트 함수 구현 필요
+        assign_category_prompt(cat_service=app.cat_service, book_service=app.book_service)
         return PromptType.CATEGORY_MENU
 
 
