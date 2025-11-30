@@ -22,6 +22,9 @@ class CategoryService:
                 matched_isbn.append(isbn_obj)
         return matched_isbn
 
+    def search_category_by_name(self, cat_name: str):
+        return self.cat_repo.find_by_name(cat_name)
+
 def parse_category_expression(expr: str) -> list:
     tokens = []
     buf = ""

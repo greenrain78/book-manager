@@ -64,6 +64,15 @@ def search_by_category_prompt(book_service: BookService, cat_service: CategorySe
         if keyword:
             break
 
+    # 기획서에 있는 내용을 충족하기 위해 동일한 연산을 2번 수행
+    # cat_service.search_category_by_name으로 조회, 연산자를 기준으로 list로 분리 후 각각 조회
+    # 존재하지 않는 카테고리명입니다
+    for token in keyword.replace('&', ' ').replace('|', ' ').split():
+        cat = cat_service.search_category_by_name(cat_name=token)
+        if not cat:
+            print(f"존재하지 않는 카테고리명입니다.")
+            return None
+
     # 검색 수행
     isbns = cat_service.search_by_category(expr=keyword)
     if not isbns:

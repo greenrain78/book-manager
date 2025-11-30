@@ -136,3 +136,145 @@ class TestSearchByCategoryPrompt(unittest.TestCase):
         out = mock_stdout.getvalue()
 
         self.assertIn("카테고리에 해당하는 도서가 존재하지 않습니다.", out)
+    # ---------------------------------------------------------
+    # [6.2.1.2-2] 비정상 결과 1: 문법 위배 (로마자/공백 오류)
+    # ---------------------------------------------------------
+
+    @patch("builtins.input", side_effect=["Computer", "science&space"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_category_prompt_invalid_case_uppercase(self, mock_stdout, mock_input):
+        """
+        입력: Computer → 로마자 소문자 위배
+        """
+        search_by_category_prompt(self.book_service, self.cat_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("카테고리명은 로마자 소문자만 입력받을 수 있습니다", out)
+
+    @patch("builtins.input", side_effect=["computer3", "science&space"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_category_prompt_invalid_case_number(self, mock_stdout, mock_input):
+        """
+        입력: computer3 → 숫자 포함
+        """
+        search_by_category_prompt(self.book_service, self.cat_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("카테고리명은 로마자 소문자만 입력받을 수 있습니다", out)
+
+    @patch("builtins.input", side_effect=[" computer", "science&space"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_category_prompt_invalid_case_space_before(self, mock_stdout, mock_input):
+        """
+        입력: ' computer' → 공백 포함
+        """
+        search_by_category_prompt(self.book_service, self.cat_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("카테고리명은 공백을 포함하지않습니다", out)
+
+    @patch("builtins.input", side_effect=[" ", "science&space"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_category_prompt_invalid_case_only_space(self, mock_stdout, mock_input):
+        """
+        입력: ' ' (공백만)
+        """
+        search_by_category_prompt(self.book_service, self.cat_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("카테고리명은 공백을 포함하지않습니다", out)
+
+
+    # ---------------------------------------------------------
+    # [6.2.1.2-3] 비정상 결과 2: 검색 조건 위배
+    # ---------------------------------------------------------
+
+    @patch("builtins.input", side_effect=["(science)&(space)", "science&space"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_category_prompt_invalid_case_parenthesis(self, mock_stdout, mock_input):
+        """
+        입력: (science)&(space) → 괄호 금지
+        """
+        search_by_category_prompt(self.book_service, self.cat_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("괄호는 사용할 수 없습니다", out)
+
+    @patch("builtins.input", side_effect=["computer!", "science&space"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_category_prompt_invalid_case_not_wrong(self, mock_stdout, mock_input):
+        """
+        입력: computer! → NOT 앞에 피연산자 없음
+        """
+        search_by_category_prompt(self.book_service, self.cat_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("NOT앞에는 피연산자가 올 수 없습니다", out)
+
+    @patch("builtins.input", side_effect=["science| ", "science&space"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_category_prompt_invalid_case_or_missing_operand(self, mock_stdout, mock_input):
+        """
+        입력: science |  → OR 좌우 operand 없음
+        """
+        search_by_category_prompt(self.book_service, self.cat_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("AND, OR은 좌우에 각각 하나의 피연산자가 존재해야 합니다", out)
+
+"""
+검사 코드의 우선 순위에 따라서 다르게 동작됨
+"""
+    # @patch("builtins.input", side_effect=["science& ", "science&space"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_category_prompt_invalid_case_and_missing_operand(self, mock_stdout, mock_input):
+    #     """
+    #     입력: science &  → AND 좌우 operand 없음
+    #     """
+    #     search_by_category_prompt(self.book_service, self.cat_service)
+    #     out = mock_stdout.getvalue()
+    #     self.assertIn("AND, OR은 좌우에 각각 하나의 피연산자가 존재해야 합니다", out)
+    #
+    # @patch("builtins.input", side_effect=["science&&space", "science&space"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_category_prompt_invalid_case_operator_chain(self, mock_stdout, mock_input):
+    #     """
+    #     입력: science&&space → 연산자 연속
+    #     """
+    #     search_by_category_prompt(self.book_service, self.cat_service)
+    #     out = mock_stdout.getvalue()
+    #     self.assertIn("연산자는 연속으로 사용할 수 없습니다", out)
+    #
+    # @patch("builtins.input", side_effect=["science+space", "science&space"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_category_prompt_invalid_case_unsupported_operator(self, mock_stdout, mock_input):
+    #     """
+    #     입력: science+space → 허용되지 않는 연산자
+    #     """
+    #     search_by_category_prompt(self.book_service, self.cat_service)
+    #     out = mock_stdout.getvalue()
+    #     self.assertIn("허용 가능한 연산자는 !,&,|입니다", out)
+    #
+    #
+    # # ---------------------------------------------------------
+    # # [6.2.1.2-4] 비정상 결과 3: 존재하지 않는 카테고리
+    # # ---------------------------------------------------------
+    # @patch("builtins.input", side_effect=["math"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_category_prompt_category_not_exists(self, mock_stdout, mock_input):
+    #     """
+    #     입력: math → 카테고리 없음
+    #     """
+    #     search_by_category_prompt(self.book_service, self.cat_service)
+    #     out = mock_stdout.getvalue()
+    #
+    #     # 문서 요구 메시지
+    #     self.assertIn("존재하지 않는 카테고리명입니다", out)
+    #
+    #
+    # # ---------------------------------------------------------
+    # # [6.2.1.2-5] 비정상 결과 4: ISBN 없음
+    # # ---------------------------------------------------------
+    # @patch("builtins.input", side_effect=["english"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_category_prompt_no_isbn_for_category(self, mock_stdout, mock_input):
+    #     """
+    #     english 카테고리는 존재하지만 ISBN 없음
+    #     """
+    #     search_by_category_prompt(self.book_service, self.cat_service)
+    #     out = mock_stdout.getvalue()
+    #
+    #     self.assertIn("카테고리에 해당하는 도서가 존재하지 않습니다", out)
