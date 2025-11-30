@@ -1,11 +1,10 @@
 from src.context import AppContext
 from src.repository.entity import User
-from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository, BorrowRepository, \
-    UsersRepository
+from src.repository.manager import UsersRepository
 
 
 class UserService:
-    def __init__(self, app: AppContext):
+    def __init__(self, app: AppContext, navi = None):
         self.users: UsersRepository = app.users_repo
 
 

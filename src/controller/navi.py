@@ -4,7 +4,7 @@ from src.context import AppContext
 from src.controller.prompt import PromptType
 from src.prompt.admin import add_book_prompt
 from src.prompt.menu import user_prompt, search_prompt, main_prompt, admin_prompt
-from src.prompt.search import search_by_book_prompt
+from src.prompt.search import search_by_book_prompt, search_by_category_prompt
 from src.prompt.start import login_prompt, signup_prompt
 from src.service.book_service import BookService
 from src.service.borrow_service import BorrowService
@@ -55,9 +55,9 @@ class NavigationController:
                 add_book_prompt(book_service=self.book_service)
                 next_prompt = PromptType.ADMIN_MENU
 
-            # elif next_prompt == PromptType.SEARCH_CATEGORY:
-            #     search_by_category_prompt()
-            #     next_prompt = PromptType.SEARCH_MENU
+            elif next_prompt == PromptType.SEARCH_CATEGORY:
+                search_by_category_prompt(book_service=self.book_service)
+                next_prompt = PromptType.SEARCH_MENU
             #
             # elif next_prompt == PromptType.BORROW:
             #     self.main_controller.book_borrow()

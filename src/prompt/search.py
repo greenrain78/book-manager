@@ -36,5 +36,46 @@ def search_by_book_prompt(book_service: BookService, borrow_service: BorrowServi
                 print(f"대여가능 | {book.book_id} | {isbn.title} | {isbn.author} | {category}")
     return None
 
-def search_by_category_prompt():
-    pass
+def search_by_category_prompt(book_service: BookService) -> None:
+    while True:
+        keyword = input_with_validation(
+            "검색할 카테고리명을 입력하세요(허용 표기는 !, &, | 이며 !=NOT, &=AND, |=OR를 의미함) :",
+            [
+                # 카테고리명은 공백을 포함하지않습니다.다시 입력해주세요.
+                (lambda v: ' ' not in v, "카테고리명은 공백을 포함하지않습니다.다시 입력해주세요."),
+                # NOT앞에는 피연산자가 올 수 없습니다. 다시 입력해주세요.
+                (lambda v: '!' not in v[0], "NOT앞에는 피연산자가 올 수 없습니다. 다시 입력해주세요."),
+                # 괄호는 사용할 수 없습니다. 다시 입력해주세요.
+                (lambda v: '(' not in v and ')' not in v, "괄호는 사용할 수 없습니다. 다시 입력해주세요."),
+                # 허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요.
+                (lambda v: all(ch.islower() or ch in ['!', '&', '|'] for ch in v), "허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요."),
+                # AND, OR은 좌우에 각각 하나의 피연산자가 존재해야 합니다. 다시 입력해주세요.
+                (lambda v: all(not (v[i] in ['&', '|'] and (i == 0 or i == len(v) - 1 or v[i - 1] in ['&', '|', '!'] or v[i + 1] in ['&', '|', '!'])) for i in range(len(v))),
+                 "AND, OR은 좌우에 각각 하나의 피연산자가 존재해야 합니다. 다시 입력해주세요."),
+
+                # 연산자는 연속으로 사용할 수 없습니다. 다시 입력해주세요.
+                (lambda v: all(not (v[i] in ['&', '|', '!'] and v[i + 1] in ['&', '|', '!']) for i in range(len(v) - 1)),
+                 "연산자는 연속으로 사용할 수 없습니다. 다시 입력해주세요."),
+
+
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda v: all(ch.islower() or ch in ['!', '&', '|'] for ch in v),
+                 "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
+            ],
+            strip = False,
+        )
+        if keyword:
+            break
+
+
+    # 검색 수행
+    books = book_service.search_books_by_category_expression(keyword)
+
+    if not books:
+        print("카테고리에 해당하는 도서가 존재하지 않습니다.")
+        return
+
+    for b in books:
+        isbn = book_service.isbn_repo.find_by_isbn(b.isbn)
+        cat_obj = book_service.cat_repo.find(cat_id=isbn.cat_id)
+        print(f"대여가능 | {b.book_id} | {isbn.title} | {isbn.author} | {cat_obj.cat_name}")

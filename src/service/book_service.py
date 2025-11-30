@@ -1,14 +1,13 @@
 from src.context import AppContext
-from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository, BorrowRepository
+from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository
 
 
 class BookService:
-    def __init__(self, app: AppContext):
+    def __init__(self, app: AppContext, navi = None):
         self.app = app
         self.books: BooksRepository = app.books_repo
         self.isbn_repo: ISBNRepository = app.isbn_repo
         self.cat_repo: CategoryRepository = app.cat_repo
-        self.borrow_repo: BorrowRepository = app.borrow_repo
 
     # 도서 추가
     def add_book(self, title: str, author: str) -> None:
@@ -24,9 +23,6 @@ class BookService:
         book = self.books.find_by_id(book_id)
         if not book:
             raise ValueError("해당 도서를 찾을 수 없습니다.")
-        # 도서가 대출중인지 확인
-        if self.app.borrow_service.is_book_borrowed(book_id=book_id):
-            raise RuntimeError("대출중인 도서는 삭제할 수 없습니다.")
         # 도서 삭제
         self.books.delete(book_id)
         # ISBN 도서가 더 이상 Books에 존재하지 않으면 ISBN도 삭제
@@ -61,6 +57,9 @@ class BookService:
 
     def search_category(self, cat_id: str):
         return self.cat_repo.find(cat_id)
+
+    def search_category_by_name(self, keyword: str) -> list:
+        return self.cat_repo.find_by_name(keyword)
 
     def search_book_by_title(self, keyword) -> list:
         if not keyword:

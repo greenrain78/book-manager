@@ -1,6 +1,7 @@
 from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.service.book_service import BookService
+from src.service.borrow_service import BorrowService
 from src.vaild.user import is_valid_book_title, is_vaild_author
 
 
@@ -54,9 +55,10 @@ def add_book_prompt(book_service) -> None:
     return None
 
 
-def delete_book_prompt(book_service: BookService) -> None:
+def delete_book_prompt(book_service: BookService, borrow_service: BorrowService) -> None:
     """
     도서 삭제 프롬프트
+    :param borrow_service:
     :param book_service:
     :return:
     """
@@ -83,6 +85,12 @@ def delete_book_prompt(book_service: BookService) -> None:
     print(f"도서명: {book.title}")
     print(f"저자: {book.author}")
     confirm = yes_no_prompt(f"정말 삭제 하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
+
+    # 도서가 대출중인지 확인
+    if borrow_service.is_book_borrowed(book_id=book_id):
+        print("해당 도서는 현재 대출중이므로 삭제할 수 없습니다.")
+        return None
+
     if confirm:
         book_service.delete_book(book_id=book_id)
         print(f"해당 도서를 삭제했습니다.")

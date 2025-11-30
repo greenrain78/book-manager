@@ -4,7 +4,7 @@ from src.repository.manager import BorrowRepository
 
 
 class BorrowService:
-    def __init__(self, app: AppContext):
+    def __init__(self, app: AppContext, navi = None):
         self.app = app
         self.borrow_repo: BorrowRepository = app.borrow_repo
         self.borrow_history_repo = app.borrow_history_repo

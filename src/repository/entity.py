@@ -90,7 +90,9 @@ class ISBN:
     def __post_init__(self):
         # 각 필드에 대한 유효성 검사 수행
         validate_isbn(value=self.isbn)
-        validate_cat_id(value=self.cat_id)
+        cat_id_list = self.cat_id.split(';')
+        for cid in cat_id_list:
+            validate_cat_id(value=cid)
         validate_book_title(value=self.title)
         validate_book_author(value=self.author)
 

@@ -23,7 +23,8 @@ def validate_by_validators(
 def input_with_validation(
     prompt: str,
     validators: list[tuple[Callable[[str], bool], str]],
-    retry: bool = True
+    retry: bool = True,
+    strip: bool = True
 ) -> str | None:
     """
     입력을 받고 여러 검증 함수를 적용.
@@ -31,7 +32,10 @@ def input_with_validation(
     - 모든 검증을 통과하면 입력값 반환
     """
     while True:
-        value = input(prompt).strip()
+        if strip:
+            value = input(prompt).strip()
+        else:
+            value = input(prompt)
         log.debug(f"{prompt}:: {value}")
         valid = True
         for fn, msg in validators:
