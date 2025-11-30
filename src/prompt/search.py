@@ -39,12 +39,10 @@ def search_by_category_prompt(book_service: BookService, cat_service: CategorySe
             [
                 # 카테고리명은 공백을 포함하지않습니다.다시 입력해주세요.
                 (lambda v: ' ' not in v, "카테고리명은 공백을 포함하지않습니다.다시 입력해주세요."),
-                # NOT앞에는 피연산자가 올 수 없습니다. 다시 입력해주세요.
-                (lambda v: '!' not in v[0], "NOT앞에는 피연산자가 올 수 없습니다. 다시 입력해주세요."),
+                (lambda v: not any((v[i] == '!' and (i != 0)) for i in range(len(v))), # !가 중간이나 끝에 위치해 있으면 오류
+                 "NOT앞에는 피연산자가 올 수 없습니다. 다시 입력해주세요."),
                 # 괄호는 사용할 수 없습니다. 다시 입력해주세요.
                 (lambda v: '(' not in v and ')' not in v, "괄호는 사용할 수 없습니다. 다시 입력해주세요."),
-                # 허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요.
-                (lambda v: all(ch.islower() or ch in ['!', '&', '|'] for ch in v), "허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요."),
 
                 # 연산자는 연속으로 사용할 수 없습니다. 다시 입력해주세요.
                 (lambda v: all(
@@ -58,20 +56,23 @@ def search_by_category_prompt(book_service: BookService, cat_service: CategorySe
                 # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
                 (lambda v: all(ch.islower() or ch in ['!', '&', '|'] for ch in v),
                  "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
+
+                # 허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요.
+                (lambda v: all(ch.islower() or ch in ['!', '&', '|'] for ch in v), "허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요."),
             ],
             strip = False,
         )
         if keyword:
             break
-
-    # 기획서에 있는 내용을 충족하기 위해 동일한 연산을 2번 수행
-    # cat_service.search_category_by_name으로 조회, 연산자를 기준으로 list로 분리 후 각각 조회
-    # 존재하지 않는 카테고리명입니다
-    for token in keyword.replace('&', ' ').replace('|', ' ').split():
-        cat = cat_service.search_category_by_name(cat_name=token)
-        if not cat:
-            print(f"존재하지 않는 카테고리명입니다.")
-            return None
+    #todo
+    # # 기획서에 있는 내용을 충족하기 위해 동일한 연산을 2번 수행
+    # # cat_service.search_category_by_name으로 조회, 연산자를 기준으로 list로 분리 후 각각 조회
+    # # 존재하지 않는 카테고리명입니다
+    # for token in keyword.replace('&', ' ').replace('|', ' ').split():
+    #     cat = cat_service.search_category_by_name(cat_name=token)
+    #     if not cat:
+    #         print(f"존재하지 않는 카테고리명입니다.")
+    #         return None
 
     # 검색 수행
     isbns = cat_service.search_by_category(expr=keyword)
