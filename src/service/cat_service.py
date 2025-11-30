@@ -20,7 +20,6 @@ class CategoryService:
         for isbn_obj in self.isbn_repo.data:
             if evaluate_category_expression(tokens, cat_name_to_id, isbn_obj):
                 matched_isbn.append(isbn_obj)
-
         return matched_isbn
 
 def parse_category_expression(expr: str) -> list:

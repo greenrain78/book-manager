@@ -1,5 +1,8 @@
 from src.context import AppContext
-from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository
+from src.repository.entity import ISBN, Category, Book
+from src.repository.manager import BooksRepository, ISBNRepository, CategoryRepository, BorrowRepository
+from src.service import borrow_service
+from src.service.borrow_service import BorrowService
 
 
 class BookService:
@@ -8,6 +11,8 @@ class BookService:
         self.books: BooksRepository = app.books_repo
         self.isbn_repo: ISBNRepository = app.isbn_repo
         self.cat_repo: CategoryRepository = app.cat_repo
+        self.borrow_service: BorrowService = borrow_service.BorrowService(app)
+
 
     # 도서 추가
     def add_book(self, title: str, author: str) -> None:
@@ -55,7 +60,24 @@ class BookService:
     def search_books_by_isbn(self, isbn: str) -> list:
         return self.books.find_by_isbn(isbn)
 
-    def search_category(self, cat_id: str):
+    def read_books_by_isbn(self, isbn: ISBN) -> list[dict]:
+        """
+        보기 좋게 도서 정보 반환
+        """
+        books = self.books.find_by_isbn(isbn=isbn.isbn)
+        categorys = [self.cat_repo.find(cat_id) for cat_id in isbn.cat_id.split(';')]
+
+        result = []
+        for book in books:
+            result.append({
+                "book_id": book.book_id,
+                "title": isbn.title,
+                "author": isbn.author,
+                "category": ";".join([cat.cat_name for cat in categorys if cat]) if categorys else "uncategorized",
+                "status": "대출중" if self.borrow_service.is_book_borrowed(book.book_id) else "대여가능"
+            })
+        return result
+    def search_category(self, cat_id: str) -> Category | None:
         return self.cat_repo.find(cat_id)
 
     def search_category_by_name(self, keyword: str) -> list:

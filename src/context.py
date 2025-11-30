@@ -16,6 +16,9 @@ class AppContext:
     borrow_period = timedelta(days=BORROW_PERIOD_DAYS)
 
     def __init__(self):
+        self.user_service = None
+        self.borrow_service = None
+        self.book_service = None
         self.current_date = None
         self.current_user: Optional[User] = None
 
