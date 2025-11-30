@@ -68,3 +68,44 @@ class TestCategorySearchIntegration(unittest.TestCase):
         result = self.service.search_by_category("science|math")
         ids = sorted([b.isbn for b in result])
         self.assertEqual(ids, ["ISBN01", "ISBN02"])
+
+    def test_category_exist_but_no_isbn(self):
+        # categories: english 존재
+        self.cats = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.cats.write("CAT05|english\n")
+        self.cats.close()
+
+        self.cat_repo = CategoryRepository(self.cats.name)
+        self.service.cat_repo = self.cat_repo
+
+        # isbn에는 english 카테고리 없음
+        self.service.search_by_category("english")
+        result = self.service.search_by_category("english")
+        self.assertEqual(len(result), 0)
+
+    def test_category_have_isbn_but_no_book(self):
+        # categories: chemistry
+        self.cats = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.cats.write("CAT06|chemistry\n")
+        self.cats.close()
+
+        self.cat_repo = CategoryRepository(self.cats.name)
+        self.service.cat_repo = self.cat_repo
+
+        # ISBN.txt: chemistry 카테고리를 가진 ISBN10 존재
+        self.isbns = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.isbns.write("ISBN10|Chem Book|Author|CAT06\n")
+        self.isbns.close()
+
+        self.isbn_repo = ISBNRepository(self.isbns.name)
+        self.service.isbn_repo = self.isbn_repo
+
+
+        self.service.search_by_category("chemistry")
+        result = self.service.search_by_category("chemistry")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].isbn, "ISBN10")
+        self.assertEqual(result[0].cat_id, "CAT06")
+
+        book_ids = self.book_repo.find_by_isbn("ISBN10")
+        self.assertEqual(len(book_ids), 0)  # 도서는 없음
