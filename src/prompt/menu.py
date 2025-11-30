@@ -68,7 +68,30 @@ def admin_prompt() -> PromptType:
             print("입력에 해당하는 명령어가 없습니다. 다시 입력해 주세요.")
 
 
-
+def category_prompt() -> PromptType:
+    while True:
+        print(f"Category Management")
+        print(f"1. 카테고리 신설")
+        print(f"2. 카테고리 삭제")
+        print(f"3. 카테고리 병합")
+        print(f"4. 카테고리 수정")
+        print(f"5. 카테고리 부여")
+        print(f"6. 뒤로가기")
+        choice = input("명령어를 입력하세요: ").strip()
+        if choice == '1':
+            return PromptType.CATEGORY_ADD
+        elif choice == '2':
+            return PromptType.CATEGORY_DELETE
+        elif choice == '3':
+            return PromptType.CATEGORY_MERGE
+        elif choice == '4':
+            return PromptType.CATEGORY_MODIFY
+        elif choice == '5':
+            return PromptType.CATEGORY_ASSIGN
+        elif choice == '6':
+            return PromptType.ADMIN_MENU
+        else:
+            print("잘못된 입력입니다!! 1,2,3,4,5,6 중 하나를 입력하세요.")
 
 
 def user_prompt() -> PromptType:

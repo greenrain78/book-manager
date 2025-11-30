@@ -2,7 +2,7 @@ from logging import getLogger
 
 from src.context import AppContext
 from src.controller.prompt import PromptType
-from src.prompt.admin import add_book_prompt
+from src.prompt.admin import add_book_prompt, modify_book_prompt, delete_book_prompt
 from src.prompt.menu import user_prompt, search_prompt, main_prompt, admin_prompt
 from src.prompt.search import search_by_book_prompt, search_by_category_prompt
 from src.prompt.start import login_prompt, signup_prompt
@@ -45,6 +45,43 @@ def handle_prompt(app: AppContext, prompt_type: PromptType) -> PromptType:
 
     elif prompt_type == PromptType.EXIT:
         return PromptType.EXIT
+
+    elif prompt_type == PromptType.LOGOUT:
+        app.current_user = None
+        log.info("사용자가 로그아웃했습니다.")
+        return PromptType.MAIN_MENU
+
+    elif prompt_type == PromptType.BOOK_BORROW:
+        return PromptType.USER_MENU
+    elif prompt_type == PromptType.BOOK_RETURN:
+        return PromptType.USER_MENU
+
+    elif prompt_type == PromptType.ADMIN_BOOK_MODIFY:
+        modify_book_prompt(book_service=app.book_service)
+        return PromptType.ADMIN_MENU
+    elif prompt_type == PromptType.ADMIN_BOOK_DELETE:
+        delete_book_prompt(book_service=app.book_service, borrow_service=app.borrow_service)
+        return PromptType.ADMIN_MENU
+
+    elif prompt_type == PromptType.CATEGORY_MENU:
+        return PromptType.ADMIN_MENU
+
+    elif prompt_type == PromptType.CATEGORY_ADD:
+        #todo: 카테고리 추가 프롬프트 함수 구현 필요
+        return PromptType.CATEGORY_MENU
+    elif prompt_type == PromptType.CATEGORY_DELETE:
+        #todo: 카테고리 삭제 프롬프트 함수 구현 필요
+        return PromptType.CATEGORY_MENU
+    elif prompt_type == PromptType.CATEGORY_MERGE:
+        #todo: 카테고리 병합 프롬프트 함수 구현 필요
+        return PromptType.CATEGORY_MENU
+    elif prompt_type == PromptType.CATEGORY_MODIFY:
+        #todo: 카테고리 수정 프롬프트 함수 구현 필요
+        return PromptType.CATEGORY_MENU
+    elif prompt_type == PromptType.CATEGORY_ASSIGN:
+        #todo: 카테고리 부여 프롬프트 함수 구현 필요
+        return PromptType.CATEGORY_MENU
+
 
     else:
         log.warning(f"Unknown prompt type: {prompt_type}")

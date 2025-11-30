@@ -11,6 +11,11 @@ class PromptType(Enum):
     LOGIN = auto()
     EXIT = auto()
 
+    CATEGORY_ASSIGN = auto()
+    CATEGORY_MODIFY = auto()
+    CATEGORY_MERGE = auto()
+    CATEGORY_DELETE = auto()
+    CATEGORY_ADD = auto()
 
     BOOK_BORROW = auto()
     BOOK_RETURN = auto()
