@@ -1,4 +1,5 @@
 from src.context import AppContext
+from src.repository.entity import Category, ISBN
 from src.repository.manager import CategoryRepository, ISBNRepository
 
 
@@ -24,6 +25,52 @@ class CategoryService:
 
     def search_category_by_name(self, cat_name: str):
         return self.cat_repo.find_by_name(cat_name)
+
+    def add_category(self, cat_name):
+        new_cat_id = self.generate_category_id()
+        new_cat = Category(cat_id=new_cat_id, cat_name=cat_name)
+        self.cat_repo.insert(category=new_cat)
+        return new_cat
+
+    def generate_category_id(self) -> str:
+        existing_ids = [int(cat.cat_id[3:]) for cat in self.cat_repo.data if cat.cat_id.startswith("CAT") and cat.cat_id[3:].isdigit()]
+        next_id_num = max(existing_ids, default=0) + 1
+        return f"CAT{next_id_num:02d}"
+
+    def category_exists(self, cat_name: str) -> bool:
+        return self.cat_repo.find_by_name(cat_name) is not None
+
+    def merge_category(self, new_cat_name: str, cat_name_1: str, cat_name_2: str) -> Category:
+        cat1 = self.cat_repo.find_by_name(cat_name_1)
+        cat2 = self.cat_repo.find_by_name(cat_name_2)
+
+        if not cat1 or not cat2:
+            raise ValueError("병합할 카테고리 중 하나 이상이 존재하지 않습니다.")
+
+        new_cat = self.add_category(new_cat_name)
+        for isbn_obj in self.isbn_repo.data:
+            cat_ids = isbn_obj.cat_id.split(';')
+            if cat1.cat_id in cat_ids or cat2.cat_id in cat_ids:
+                # 기존 카테고리 ID 제거
+                cat_ids = [cid for cid in cat_ids if cid != cat1.cat_id and cid != cat2.cat_id]
+                # 새로운 카테고리 ID 추가
+                cat_ids.append(new_cat.cat_id)
+                isbn_obj.cat_id = ';'.join(cat_ids)
+
+        return new_cat
+
+    # 카테고리 부여
+    def assign_category_to_isbn(self, isbn_obj: ISBN, cat: Category) -> None:
+        current_cat_ids = isbn_obj.cat_id.split(';') if isbn_obj.cat_id else []
+        if cat.cat_id in current_cat_ids:
+            return  # 이미 부여된 카테고리
+        if len(current_cat_ids) >= 3:
+            return  # 최대 카테고리 수 초과
+         # 카테고리 추가
+        current_cat_ids.append(cat.cat_id)
+        isbn_obj.cat_id = ';'.join(current_cat_ids)
+        return
+
 
 def parse_category_expression(expr: str) -> list:
     tokens = []
