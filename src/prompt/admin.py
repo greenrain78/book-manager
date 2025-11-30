@@ -1,3 +1,5 @@
+import re
+
 from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.repository.entity import ISBN
@@ -111,24 +113,27 @@ def modify_book_prompt(book_service: BookService) -> None:
     """
 
     while True:
-        book_id = input_with_validation(
-            "수정할 도서의 고유번호(BookId)를 입력하세요:",
+        isbn = input_with_validation(
+            "수정할 책의 ISBN을 입력하세요:",
             [
-                # 고유번호는 숫자 3자리 입니다. EX:001,011,111
-                (lambda v: v.isdigit() and len(v) == 3, "고유번호는 숫자 3자리 입니다. EX:001,011,111"),
-                # 고유번호는 공백을 포함하지 않습니다
-                (lambda v: ' ' not in v, "고유번호는 공백을 포함하지 않습니다"),
-                # 존재하는 도서 ID인지 검사
-                (lambda v: book_service.search_book_by_id(book_id=v) is not None, "목록에 존재하지 않는 도서입니다.!! 올바른 고유번호를 입력하세요."),
+                # ISBN 형식 검사: ISBN + 숫자 2개
+                (lambda v: re.match(r"^ISBN\d{2}$", v) is not None,
+                 "ISBN의 형식은 ISBN+숫자2개입니다. EX:ISBN01,ISBN10,ISBN99"),
+                # 공백 포함 불가
+                (lambda v: " " not in v,
+                 "입력에 공백을 포함할 수 없습니다. 다시 입력해주세요."),
+                # 존재 여부 검사
+                (lambda v: book_service.isbn_repo.find(v) is not None,
+                 "존재하지 않는 ISBN입니다."),
             ]
         )
-        if book_id:
+        if isbn:
             break
 
-    book = book_service.search_book_by_id(book_id=book_id)
+    isbn_obj = book_service.isbn_repo.find(isbn)
     print(f"[수정할 도서 정보]")
-    print(f"도서명: {book.title}")
-    print(f"저자: {book.author}")
+    print(f"도서명: {isbn_obj.title}")
+    print(f"저자: {isbn_obj.author}")
 
     # 수정된 도서
     while True:
@@ -153,14 +158,8 @@ def modify_book_prompt(book_service: BookService) -> None:
 
     new_title, new_author = [part.strip() for part in modified_book.split("|", 1)]
 
-    print(f"변경 전: {book.title} {book.author}")
-    print(f"변경 후: {new_title} {new_author}")
-    confirm = yes_no_prompt(f"정말 수정하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
-    if confirm:
-        book_service.modify_book(book_id=book_id, new_title=new_title, new_author=new_author)
-        print(f"해당 도서를 수정했습니다.")
-    else:
-        print(f"해당 도서를 수정하지 않았습니다.")
+    book_service.modify_book(isbn=isbn, new_title=new_title, new_author=new_author)
+    print(f"수정했습니다.")
     return None
 
 

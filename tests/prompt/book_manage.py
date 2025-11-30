@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 
 from src.context import AppContext
-from src.prompt.admin import delete_book_prompt
+from src.prompt.admin import delete_book_prompt, modify_book_prompt
 from src.repository.entity import Borrow
 from src.repository.manager import (
     BooksRepository, ISBNRepository, CategoryRepository, BorrowRepository
@@ -333,3 +333,318 @@ class TestDeleteBookPrompt(unittest.TestCase):
         delete_book_prompt(self.book_service, self.borrow_service)
         out = mock_stdout.getvalue()
         self.assertIn("해당 도서를 삭제하지 않았습니다.", out)
+
+class TestModifyBookPrompt(unittest.TestCase):
+
+    def setUp(self):
+        # temp files
+        self.books = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.isbn = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.cat = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+        self.borrow = tempfile.NamedTemporaryFile(delete=False, mode="w+", encoding="utf-8")
+
+        self.books_path = self.books.name
+        self.isbn_path = self.isbn.name
+        self.cat_path = self.cat.name
+        self.borrow_path = self.borrow.name
+
+        # -------------------------
+        # 기본 테스트 데이터 구성
+        # -------------------------
+        # books.txt
+        self.books.write("001|ISBN01\n")
+        self.books.write("002|ISBN01\n")
+        self.books.write("007|ISBN02\n")
+        self.books.close()
+
+        # ISBN.txt
+        self.isbn.write("ISBN01|Basic Python|Ji Min|CAT01\n")
+        self.isbn.write("ISBN02|Nintendo|Gun woo|CAT01\n")
+        self.isbn.close()
+
+        # categories.txt
+        self.cat.write("CAT01|computer\n")
+        self.cat.close()
+
+        # borrow.txt (기본은 빈 파일)
+        self.borrow.write("")
+        self.borrow.close()
+
+        # Fake AppContext
+        self.app = FakeAppContext(
+            books_path=self.books_path,
+            isbn_path=self.isbn_path,
+            cat_path=self.cat_path,
+            borrow_path=self.borrow_path
+        )
+
+        # Services
+        self.book_service = BookService(self.app)
+        self.borrow_service = BorrowService(self.app)
+
+    def tearDown(self):
+        os.unlink(self.books_path)
+        os.unlink(self.isbn_path)
+        os.unlink(self.cat_path)
+        os.unlink(self.borrow_path)
+
+    # ------------------------------------------------------
+    # 6.3.3-a : 정상 → ISBN01, ISBN02 입력 시 도서정보 출력
+    # ------------------------------------------------------
+    @patch("builtins.input", side_effect=["ISBN01", "NewTitle|NewAuthor"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_a1(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("[수정할 도서 정보]", out)
+        self.assertIn("Basic Python", out)
+        self.assertIn("Ji Min", out)
+
+    @patch("builtins.input", side_effect=["ISBN02", "NewTitle|NewAuthor"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_a2(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("[수정할 도서 정보]", out)
+        self.assertIn("Nintendo", out)
+        self.assertIn("Gun woo", out)
+
+    # ------------------------------------------------------
+    # 6.3.3-b : ISBN 문법 오류 / 공백 오류
+    # ------------------------------------------------------
+    @patch("builtins.input", side_effect=["ISBN1", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_b1(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("ISBN의 형식은 ISBN+숫자2개입니다", mock_stdout.getvalue())
+
+    @patch("builtins.input", side_effect=["ISBN123", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_b2(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("ISBN의 형식은 ISBN+숫자2개입니다", mock_stdout.getvalue())
+
+    @patch("builtins.input", side_effect=["isbn01", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_b3(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("ISBN의 형식은 ISBN+숫자2개입니다", mock_stdout.getvalue())
+
+    #todo 공백 테스트는 나중에
+    # @patch("builtins.input", side_effect=[" ISBN01", "ISBN01", "New|A"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_modify_book_prompt_b6(self, mock_stdout, mock_input):
+    #     modify_book_prompt(self.book_service)
+    #     self.assertIn("입력에 공백을 포함할 수 없습니다", mock_stdout.getvalue())
+
+    # ------------------------------------------------------
+    # 6.3.3-c : 존재하지 않는 ISBN 입력
+    # ------------------------------------------------------
+    @patch("builtins.input", side_effect=["ISBN05", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_c1(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("존재하지 않는 ISBN입니다.", mock_stdout.getvalue())
+
+    # ------------------------------------------------------
+    # 6.3.3-d : 정상 입력 new_title|new_author
+    # ------------------------------------------------------
+    @patch("builtins.input", side_effect=["ISBN01", "Python|taewoon"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_d1(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        out = mock_stdout.getvalue()
+        self.assertIn("수정했습니다.", out)
+
+        # 실제 파일 반영 검사
+        with open(self.isbn_path, "r", encoding="utf-8") as f:
+            data = f.read()
+        self.assertIn("Python", data)
+        self.assertIn("taewoon", data)
+
+    # ------------------------------------------------------
+    # 6.3.3-e/g : 도서명/저자 형식 오류 테스트 일부
+    # ------------------------------------------------------
+    @patch("builtins.input", side_effect=["ISBN01", "Basic  python|taetae", "Python|tae"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_g1(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("잘못된 입력입니다!! 올바른 제목을 입력하세요", mock_stdout.getvalue())
+
+    @patch("builtins.input", side_effect=["ISBN01", "Python||tae", "Python|tae"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_book_prompt_g19(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("[도서명 | 저자] 형식으로 입력해주세요.", mock_stdout.getvalue())
+
+    # asd → 오류
+    @patch("builtins.input", side_effect=["asd", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_isbn_invalid_asd(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("ISBN의 형식은 ISBN+숫자2개입니다", mock_stdout.getvalue())
+
+    # 123 → 오류
+    @patch("builtins.input", side_effect=["123", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_isbn_invalid_123(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("ISBN의 형식은 ISBN+숫자2개입니다", mock_stdout.getvalue())
+    #
+    # # ISBN␣01 → 공백 오류
+    # @patch("builtins.input", side_effect=["ISBN 01", "ISBN01", "New|A"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_isbn_invalid_space_middle(self, mock_stdout, mock_input):
+    #     modify_book_prompt(self.book_service)
+    #     self.assertIn("입력에 공백을 포함할 수 없습니다", mock_stdout.getvalue())
+
+    # # ISBN01␣ → 공백 오류
+    # @patch("builtins.input", side_effect=["ISBN01 ", "ISBN01", "New|A"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_isbn_invalid_space_end(self, mock_stdout, mock_input):
+    #     modify_book_prompt(self.book_service)
+    #     self.assertIn("입력에 공백을 포함할 수 없습니다", mock_stdout.getvalue())
+
+    # 빈 문자열 → 오류
+    @patch("builtins.input", side_effect=["", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_isbn_invalid_empty(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("ISBN의 형식은 ISBN+숫자2개입니다", mock_stdout.getvalue())
+
+    # 공백(" ") → 오류
+    @patch("builtins.input", side_effect=[" ", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_isbn_invalid_one_space(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("ISBN의 형식은 ISBN+숫자2개입니다", mock_stdout.getvalue())
+
+    # ISBN10 없음 → 오류
+    @patch("builtins.input", side_effect=["ISBN10", "ISBN01", "New|A"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_isbn_not_found(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("존재하지 않는 ISBN입니다.", mock_stdout.getvalue())
+
+    # Python|tae woon → 성공
+    @patch("builtins.input", side_effect=["ISBN01", "Python|tae woon"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_success_author_with_space(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("수정했습니다.", mock_stdout.getvalue())
+
+    # Basic python|ji min → 성공
+    @patch("builtins.input", side_effect=["ISBN01", "Basic python|ji min"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_success_both_have_space(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("수정했습니다.", mock_stdout.getvalue())
+
+
+    # Basic python ␣|taetae → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Basic python |taetae", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_title_trailing_space(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("잘못된 입력입니다!! 올바른 제목을 입력하세요.", mock_stdout.getvalue())
+
+    # Basic python|␣taetae → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Basic python| taetae", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_author_leading_space(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("잘못된 입력입니다!! 올바른 저자를 입력하세요.", mock_stdout.getvalue())
+
+    # Basic python␣|␣taetae → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Basic python | taetae", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_both_side_spaces(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("잘못된 입력입니다!! 올바른 제목을 입력하세요.", mock_stdout.getvalue())
+
+    # Basic python|tae␣␣tae → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Basic python|tae  tae", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_author_double_space_middle(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("잘못된 입력입니다!! 올바른 저자를 입력하세요.", mock_stdout.getvalue())
+
+
+    # !Basic python|taetae → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "!Basic python|taetae", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_title_symbol(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("잘못된 입력입니다!! 올바른 제목을 입력하세요.", mock_stdout.getvalue())
+
+    # Basic python|!taetae → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Basic python|!taetae", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_author_symbol(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("잘못된 입력입니다!! 올바른 저자를 입력하세요.", mock_stdout.getvalue())
+
+    # Basic python|(빈문자열) → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Basic python|", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_empty_author(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("도서명과 저자는 각각 1자 이상이어야 합니다", mock_stdout.getvalue())
+
+    # Basic python|␣ → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Basic python| ", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_author_blank_space(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("도서명과 저자는 각각 1자 이상이어야 합니다", mock_stdout.getvalue())
+
+    # (빈문자열)|taetae → 오류
+    @patch("builtins.input", side_effect=["ISBN01", "|taetae", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_empty_title(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("도서명과 저자는 각각 1자 이상이어야 합니다", mock_stdout.getvalue())
+
+    # ␣|taetae → 오류
+    @patch("builtins.input", side_effect=["ISBN01", " |taetae", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_title_blank_space(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("도서명과 저자는 각각 1자 이상이어야 합니다", mock_stdout.getvalue())
+    #
+    # # ␣Python|taewoon → 오류
+    # @patch("builtins.input", side_effect=["ISBN01", " Python|taewoon", "Python|ok"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_modify_invalid_title_leading_space(self, mock_stdout, mock_input):
+    #     modify_book_prompt(self.book_service)
+    #     self.assertIn("잘못된 입력입니다!! 올바른 제목을 입력하세요.", mock_stdout.getvalue())
+
+
+    # # Python|taewoon␣ → 오류
+    # @patch("builtins.input", side_effect=["ISBN01", "Python|taewoon ", "Python|ok"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_modify_invalid_author_trailing_space(self, mock_stdout, mock_input):
+    #     modify_book_prompt(self.book_service)
+    #     self.assertIn("잘못된 입력입니다!! 올바른 저자를 입력하세요.", mock_stdout.getvalue())
+
+    # # ␣Python|taewoon␣ → 오류
+    # @patch("builtins.input", side_effect=["ISBN01", " Python|taewoon ", "Python|ok"])
+    # @patch("sys.stdout", new_callable=io.StringIO)
+    # def test_modify_invalid_both_sides_space(self, mock_stdout, mock_input):
+    #     modify_book_prompt(self.book_service)
+    #     self.assertIn("잘못된 입력입니다!! 올바른 제목을 입력하세요.", mock_stdout.getvalue())
+
+    # Python taewoon → 형식 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Python taewoon", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_format_missing_bar(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("[도서명 | 저자] 형식으로 입력해주세요.", mock_stdout.getvalue())
+
+    # Python| taewoon |too → 형식 오류
+    @patch("builtins.input", side_effect=["ISBN01", "Python| taewoon |too", "Python|ok"])
+    @patch("sys.stdout", new_callable=io.StringIO)
+    def test_modify_invalid_format_multiple_bar(self, mock_stdout, mock_input):
+        modify_book_prompt(self.book_service)
+        self.assertIn("[도서명 | 저자] 형식으로 입력해주세요.", mock_stdout.getvalue())
+
