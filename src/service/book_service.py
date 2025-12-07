@@ -13,7 +13,6 @@ class BookService:
         self.cat_repo: CategoryRepository = app.cat_repo
         self.borrow_service: BorrowService = borrow_service.BorrowService(app)
 
-
     # 도서 추가
     def add_book(self, title: str, author: str) -> None:
         # ISBN 추가

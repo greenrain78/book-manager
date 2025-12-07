@@ -12,6 +12,7 @@ from src.repository.manager import (
 )
 from src.service.book_service import BookService
 from src.service.borrow_service import BorrowService
+from tests.common import run_prompt_test
 
 
 class FakeAppContext(AppContext):
@@ -96,6 +97,17 @@ class TestDeleteBookPrompt(unittest.TestCase):
         with open(self.books_path, "r", encoding="utf-8") as f:
             data = f.read()
             self.assertNotIn("001|", data)
+
+
+    def test_delete_book_normal_no_borrow2(self):
+        run_prompt_test(
+            func=lambda: delete_book_prompt(self.book_service, self.borrow_service),
+            inputs=["001", "Y"],
+            expected_messages=[
+                "도서명: Basic Java",
+                "해당 도서를 삭제했습니다."
+            ]
+        )
 
     # ---------------------------------------------------
     # 6.3.2-a3 : 대출중이면 삭제 불가

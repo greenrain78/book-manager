@@ -62,6 +62,19 @@ class UsersRepository(BaseRepository):
     def count_users(self):
         return len(self.data)
 
+    def find_by_id(self, user_id: str) -> User | None:
+        for u in self.data:
+            if u.user_id == user_id:
+                return u
+        return None
+
+    def modify(self, user_id, new_penaltyDate):
+        for u in self.data:
+            if u.user_id == user_id:
+                u.penaltyDate = new_penaltyDate
+                break
+        self.save_all()
+
 
 class BooksRepository(BaseRepository):
     def __init__(self, path: str):

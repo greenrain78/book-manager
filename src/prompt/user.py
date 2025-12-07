@@ -2,7 +2,9 @@ from src.core.valid import input_with_validation
 from src.prompt.common import yes_no_prompt
 from src.service.book_service import BookService
 from src.service.borrow_service import BorrowService
+from src.settings import MAX_BORROWED_BOOKS
 from src.vaild.user import is_vaild_book_id
+from datetime import datetime
 
 
 # 대출
@@ -26,15 +28,32 @@ def borrow_prompt(book_service: BookService, borrow_service: BorrowService) -> N
         print("이미 대출중인 도서입니다!! 다른 책을 입력하세요.")
         return None
 
-    #todo 연체중인 경우
-    #todo 제제중인 경우
-    #todo 3회 이상 대출한 경우
+    # 사용자에 대한 대출 가능 여부 검사
+    penatly_date = borrow_service.get_user_penalty_date()
+    if penatly_date:
+        print("제재 상태에서는 책을 1권 이상 빌릴 수 없습니다!!")
+        print(f"제재 기간은 {penatly_date.strftime('%Y-%m-%d')}입니다.")
+        return None
+
+    # 대출 중인 책 있는지 검사 - 최대 3권까지 대출 가능
+    borrowed_books = borrow_service.has_unreturned_books()
+    if len(borrowed_books) >= MAX_BORROWED_BOOKS:
+        print("대출 가능 한도를 초과했습니다!! 다음에 이용해 주세요.")
+        return None
+
+    # 연체 도서 있는지 검사
+    for borrow in borrowed_books:
+        due_date = datetime.strptime(borrow.due_date, "%Y-%m-%d")
+        if borrow_service.app.current_date > due_date:
+            print("연체중인 도서가 존재합니다!! 반납 후 이용해 주세요.")
+            return None
 
     # 도서 목록에서 해당 ID의 도서 찾기
     book = book_service.search_book_by_id(book_id)
+    isbn = book_service.search_isbn(isbn=book.isbn)
     due_date = borrow_service.borrow_book(book_id)
     # 대출 처리
-    print(f"“{book.title}” 이 대출되었습니다. 반납기한은 {due_date}입니다.")
+    print(f"“{isbn.title}” 이 대출되었습니다. 반납기한은 {due_date}입니다.")
 
     return None
 
@@ -47,9 +66,10 @@ def return_prompt(book_service: BookService, borrow_service: BorrowService) -> N
         return None
     print("[대출 중인 도서 정보] ")
     for borrow in borrowed_books:
-        book = book_service.search_book_by_id(book_id=borrow.book_id)
-        print(f"제목: {book.title}")
-        print(f"저자: {book.author}")
+        book = book_service.search_book_by_id(borrow.book_id)
+        isbn = book_service.search_isbn(isbn=book.isbn)
+        print(f"제목: {isbn.title}")
+        print(f"저자: {isbn.author}")
 
     while True:
         book_id = input_with_validation(
@@ -69,12 +89,13 @@ def return_prompt(book_service: BookService, borrow_service: BorrowService) -> N
         return None
 
     confirm = yes_no_prompt(f"정말 반납하시겠습니까? (Y/N):")
-    if confirm:
-        borrow_service.return_book(borrow=borrow)
-        print(f"정상적으로 반납이 완료되었습니다.")
-    else:
+    if not confirm:
         print(f"사용자가 반납을 취소했습니다.")
-    return None
+        return None
+    borrow_service.return_book(borrow=borrow)
+    print(f"정상적으로 반납이 완료되었습니다.")
+
+
 
 # 대출
 # def borrow_prompt1(app: AppContext) -> None:

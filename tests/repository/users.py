@@ -36,6 +36,7 @@ class TestUsersRepository(unittest.TestCase):
         self.assertEqual(repo.data[0].user_id, "001")
         self.assertEqual(repo.data[0].pw, "pass123")
         self.assertEqual(repo.data[0].email, "john@example.com")
+        self.assertEqual(repo.data[0].penaltyDate, "2025-01-08")
 
     def test_insert(self):
         """

@@ -24,7 +24,7 @@ class AppContext:
         self.current_user: Optional[User] = None
 
         # 시스템 요구사항 확인
-        self.check_system_requirements()
+        self.refresh_system()
         # 리포지토리 초기화
         try:
             self.users_repo: UsersRepository = UsersRepository(path=USER_DATA_PATH)
@@ -36,10 +36,17 @@ class AppContext:
         except RuntimeError as e:
             self.exit_with_error(e)
 
-    def check_system_requirements(self):
-        # 디스크 공간 확인
+    def refresh_system(self):
+        """
+        시스템 상태를 새로고침합니다.
+        """
+
+
+        # 디스크 용량 확인
         if not check_disk_space(required_mb=10, path="."):
             self.exit_with_error("필수 데이터 파일을 저장할 공간이 부족합니다. 디스크 용량 확인후 다시 시작해주세요.")
+
+
 
     def login(self, username, password):
         # 실제 애플리케이션에서는 데이터베이스 조회 등을 통해 인증을 수행합니다.
@@ -63,4 +70,5 @@ class AppContext:
         print(msg)
         input("Press Enter to continue...") # 사용자에게 메시지를 읽을 시간을 줌
         raise SystemExit
+
 
