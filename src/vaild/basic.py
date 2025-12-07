@@ -25,7 +25,7 @@ def is_previous_date(input_date: datetime, app: AppContext) -> bool:
     all_dates = []
 
     # BorrowRepository
-    for borrow in app.borrow.data:
+    for borrow in app.borrow_repo.data:
         for date_str in [borrow.borrow_date]:
             try:
                 all_dates.append(datetime.strptime(date_str, "%Y-%m-%d"))
@@ -33,13 +33,12 @@ def is_previous_date(input_date: datetime, app: AppContext) -> bool:
                 raise e
 
     # BorrowHistoryRepository
-    for history in app.borrow_history.data:
+    for history in app.borrow_history_repo.data:
         for date_str in [history.borrow_date, history.return_date]:
             try:
                 all_dates.append(datetime.strptime(date_str, "%Y-%m-%d"))
             except Exception as e:
                 raise e
-
     if all_dates and any(date > input_date for date in all_dates):
         return False
     return True

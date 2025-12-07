@@ -9,6 +9,7 @@ from tests.common import PromptTestBase
 
 class BorrowPromptTest(PromptTestBase):
     ENABLE_FILE_PRINT = True   # 확인용 출력 ON/OFF
+    ENABLE_FILE_CLEANUP = True # 테스트 파일 삭제 ON/OFF
 
     # borrow_prompt 실행 + 출력 캡처
     def execute_borrow_prompt(self, book_service, borrow_service, input_values):
@@ -268,6 +269,7 @@ class BorrowPromptTest(PromptTestBase):
 
 class ReturnPromptTest(PromptTestBase):
     ENABLE_FILE_PRINT = True   # 확인용 출력 ON/OFF
+    ENABLE_FILE_CLEANUP = True # 테스트 파일 삭제 ON/OFF
 
     # borrow_prompt 실행 + 출력 캡처
     def execute_return_prompt(self, book_service, borrow_service, input_values):
@@ -402,7 +404,9 @@ class ReturnPromptTest(PromptTestBase):
         self.assertIn("저자: Alice", output)
 
 class ReturnPromptPenaltyTest(PromptTestBase):
-    ENABLE_FILE_PRINT = True
+    ENABLE_FILE_PRINT = True   # 확인용 출력 ON/OFF
+    ENABLE_FILE_CLEANUP = True # 테스트 파일 삭제 ON/OFF
+
 
     def execute_return_prompt(self, book_service, borrow_service, input_values):
         return self.execute_prompt(

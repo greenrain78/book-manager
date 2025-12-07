@@ -216,7 +216,7 @@ class ISBNRepository(BaseRepository):
 
 class CategoryRepository(BaseRepository):
     """
-    categories.txt 관리용 저장소
+    category.txt 관리용 저장소
     필드수: 2
     형식: cat_id|cat_name
     """

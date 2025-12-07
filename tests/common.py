@@ -1,42 +1,31 @@
-import unittest
-
-
-class CommonTestMixin(unittest.TestCase):
-    def run_prompt_test(func, inputs, expected_messages):
-        with patch("builtins.input", side_effect=inputs), \
-             patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
-            func()
-
-        out = mock_stdout.getvalue()
-        for msg in expected_messages:
-            self.assertIn(msg, out)
-
-
-import os
 import io
-import unittest
+import os
 import tempfile
+import unittest
 from unittest.mock import patch
 
 from src.context import AppContext
-from src.prompt.user import borrow_prompt
-from src.service.book_service import BookService
-from src.service.borrow_service import BorrowService
 
 
 class PromptTestBase(unittest.TestCase):
     ENABLE_FILE_PRINT = True   # 확인용 출력 ON/OFF
+    ENABLE_FILE_CLEANUP = True
 
     def setUp(self):
-        self.tmpdir = tempfile.TemporaryDirectory()
-        base = self.tmpdir.name
+        if self.ENABLE_FILE_CLEANUP:
+            self.tmpdir = tempfile.TemporaryDirectory()
+            base = self.tmpdir.name
+        else:
+            TEST_DIR = os.path.dirname(os.path.abspath(__file__))
+            print(f"\n===== Using Test Directory: {TEST_DIR} =====")
+            base = tempfile.mkdtemp(dir=TEST_DIR)
 
         # 테스트 파일 경로
         self.paths = {
             "users": os.path.join(base, "users.txt"),
             "books": os.path.join(base, "books.txt"),
             "isbn": os.path.join(base, "isbn.txt"),
-            "cats": os.path.join(base, "categories.txt"),
+            "cats": os.path.join(base, "category.txt"),
             "borrow": os.path.join(base, "borrow.txt"),
             "borrow_hist": os.path.join(base, "borrow_history.txt"),
         }
