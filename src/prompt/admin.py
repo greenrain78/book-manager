@@ -14,6 +14,12 @@ def add_book_prompt(book_service) -> None:
     :param book_service:
     :return:
     """
+    # 도서가 20권인지 확인
+    if len(book_service.books.data) >= 20:
+        print("등록될 수 있는 책은 총 20권입니다. 더이상 추가 할 수 없습니다.")
+        return None
+
+
     while True:
         title = input_with_validation(
             "도서명을 입력해주세요: ",
