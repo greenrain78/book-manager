@@ -374,7 +374,7 @@ class TestModifyBookPrompt(unittest.TestCase):
         self.isbn.write("ISBN02|Nintendo|Gun woo|CAT01\n")
         self.isbn.close()
 
-        # category.txt
+        # categories.txt
         self.cat.write("CAT01|computer\n")
         self.cat.close()
 

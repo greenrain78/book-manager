@@ -25,7 +25,7 @@ class PromptTestBase(unittest.TestCase):
             "users": os.path.join(base, "users.txt"),
             "books": os.path.join(base, "books.txt"),
             "isbn": os.path.join(base, "isbn.txt"),
-            "cats": os.path.join(base, "category.txt"),
+            "cats": os.path.join(base, "categories.txt"),
             "borrow": os.path.join(base, "borrow.txt"),
             "borrow_hist": os.path.join(base, "borrow_history.txt"),
         }
