@@ -23,7 +23,7 @@ def handle_prompt(app: AppContext, prompt_type: PromptType) -> PromptType:
 
     elif prompt_type == PromptType.SEARCH_BOOK:
         search_by_book_prompt(book_service=app.book_service, borrow_service=app.borrow_service)
-        return PromptType.SEARCH_MENU
+        return PromptType.USER_MENU
 
     elif prompt_type == PromptType.MAIN_MENU:
         return main_prompt()
