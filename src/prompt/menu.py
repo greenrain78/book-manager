@@ -20,11 +20,9 @@ def main_prompt() -> PromptType:
             print(f"3. 종료")
             choice = input("명령어를 입력하세요: ").strip()
             if choice == '1':
-                print("회원가입 선택")
                 return PromptType.SIGNUP
 
             elif choice == '2':
-                print("로그인 선택")
                 return PromptType.LOGIN
 
             elif choice == '3':
