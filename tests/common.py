@@ -208,11 +208,16 @@ class SystemTestBase(unittest.TestCase):
 
     # borrow_prompt 실행 후 파일/출력 검증
     def assert_after_prompt(self, output, expected_output_keywords,
+                            expected_output_not_keywords=None,
                             file_expect_contains=None,
                             file_expect_not_contains=None):
         # 출력 검사
         for word in expected_output_keywords:
             self.assertIn(word, output)
+        # 출력 미포함 검사
+        if expected_output_not_keywords:
+            for word in expected_output_not_keywords:
+                self.assertNotIn(word, output)
         # 파일 포함 검사
         if file_expect_contains:
             for key, words in file_expect_contains.items():

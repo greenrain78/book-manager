@@ -16,7 +16,8 @@ def search_by_book_prompt(book_service: BookService, borrow_service: BorrowServi
                 (lambda v: '  ' not in v, "공백이 너무 많습니다!! 올바른 제목을 입력하세요."),
                 # 정규식
                 (is_valid_book_title, "잘못된 입력입니다!! 올바른 제목을 입력하세요."),
-            ]
+            ],
+            strip=False,
         )
         if keyword:
             break

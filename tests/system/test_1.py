@@ -75,3 +75,41 @@ class SystemTest1(SystemTestBase):
                 "대여가능 ",
             ],
         )
+
+
+    def test_3(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|"],
+                "books": ["001|ISBN01"],
+                "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
+                "cats": ["CAT00|general"],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "java",    # 아이디
+                "12341234", # 비밀번호
+                "1",        # 도서 검색
+                "1",        # 도서명으로 검색
+                " Python", # 도서명
+                "4",        # 로그아웃
+                "3",        # 종료
+
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "현재 대출한 도서가 없습니다."
+            ],
+            expected_output_not_keywords=[
+                "대여가능",
+            ],
+        )
