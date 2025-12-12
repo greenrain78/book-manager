@@ -3,8 +3,6 @@ from io import StringIO
 from unittest.mock import patch
 
 from src.prompt.admin import add_book_prompt
-from src.repository.entity import ISBN, Book
-from src.service.book_service import BookService
 
 
 class TestAddBookPrompt(unittest.TestCase):

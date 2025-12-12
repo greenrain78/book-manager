@@ -1,8 +1,11 @@
 import os
+from logging import getLogger
 from typing import Callable, List, Any, Iterable, Dict
 
 from src.repository.entity import User, Book, Borrow, BorrowHistory, ISBN, Category
 
+
+log = getLogger(__name__)
 
 class BaseRepository:
     """
@@ -30,6 +33,7 @@ class BaseRepository:
     def load_all(self) -> None:
         if not os.path.exists(self.path):
             # 필수 데이터 파일이 존재하지 않습니다. 데이터 파일 확인 후 다시 시작해주세요..
+            log.error(f"데이터 파일이 존재하지 않습니다: {self.path}")
             raise RuntimeError("필수 데이터 파일이 존재하지 않습니다. 데이터 파일 확인 후 다시 시작해주세요.")
         # 초기화
         self.data = []

@@ -12,7 +12,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s:%(lineno)d - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",               # 시간 포맷
     handlers=[
-        logging.FileHandler("debug.log", encoding="utf-8"),  # 파일 기록
+        logging.FileHandler("debug.log", mode="w", encoding="utf-8"),  # 파일 기록
     ]
 )
 log = logging.getLogger(__name__)

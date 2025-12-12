@@ -3,7 +3,7 @@ USER_DATA_PATH = "data/users.txt"
 BOOK_DATA_PATH = "data/books.txt"
 BORROW_DATA_PATH = "data/borrow.txt"
 BORROW_HISTORY_DATA_PATH = "data/borrow_history.txt"
-ISBN_DATA_PATH = "data/isbn.txt"
+ISBN_DATA_PATH = "data/ISBN.txt"
 CATEGORY_DATA_PATH = "data/categories.txt"
 
 
