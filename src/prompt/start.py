@@ -31,10 +31,10 @@ def date_input_prompt(app: AppContext) -> None:
             current = datetime.strptime(date_str, "%Y-%m-%d")
             if min_date is None or current < min_date:
                 min_date = current
-    min_date_str = "" if min_date is None else f"{min_date.strftime('%Y-%m-%d')} 이후의 날짜만 입력가능합니다(YYYY-MM-DD):"
+    min_date_str = "" if min_date is None else f"{min_date.strftime('%Y-%m-%d')} 이후의 날짜만 입력가능합니다"
     while True:
         date_str = input_with_validation(
-            f"날짜를 입력하세요.{min_date_str}",
+            f"날짜를 입력하세요.{min_date_str}(YYYY-MM-DD):",
             [
                 (is_valid_date_format, "잘못된 입력입니다!! 올바른 날짜를 입력하세요."),
             ]
