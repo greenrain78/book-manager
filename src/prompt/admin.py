@@ -154,7 +154,8 @@ def modify_book_prompt(book_service: BookService) -> None:
                 # 저자명 유효성 검사
                 (lambda s: is_vaild_author(s.split("|", 1)[1]),
                  "잘못된 입력입니다!! 올바른 저자를 입력하세요."),
-            ]
+            ],
+            strip=False
         )
         if modified_book:
             break
