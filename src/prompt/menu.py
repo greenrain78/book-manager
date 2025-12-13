@@ -76,6 +76,11 @@ def category_prompt() -> PromptType:
         print(f"5. 카테고리 부여")
         print(f"6. 뒤로가기")
         choice = input("명령어를 입력하세요: ").strip()
+
+        # 비정상 결과 2: 인자가 포함된 경우 (공백 존재)
+        if " " in choice:
+            print("모든 명령어에는 인자가 필요하지 않습니다. 다시 입력해 주세요.")
+            continue
         if choice == '1':
             return PromptType.CATEGORY_ADD
         elif choice == '2':
@@ -89,7 +94,7 @@ def category_prompt() -> PromptType:
         elif choice == '6':
             return PromptType.ADMIN_MENU
         else:
-            print("잘못된 입력입니다!! 1,2,3,4,5,6 중 하나를 입력하세요.")
+            print("입력에 해당하는 명령어가 없습니다. 다시 입력해 주세요.")
 
 
 def user_prompt() -> PromptType:
