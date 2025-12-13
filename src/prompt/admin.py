@@ -83,16 +83,17 @@ def delete_book_prompt(book_service: BookService, borrow_service: BorrowService)
         print("목록에 존재하지 않는 도서입니다.!! 올바른 고유번호를 입력하세요.")
         return None
 
+    # 도서가 대출중인지 확인
+    if borrow_service.is_book_borrowed(book_id=book_id):
+        print("해당 도서는 현재 대출중이므로 삭제할 수 없습니다.")
+        return None
+
     isbn: ISBN = book_service.isbn_repo.find_by_isbn(isbn=book.isbn)
     print(f"[삭제할 도서 정보]")
     print(f"도서명: {isbn.title}")
     print(f"저자: {isbn.author}")
     confirm = yes_no_prompt(f"정말 삭제 하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
 
-    # 도서가 대출중인지 확인
-    if borrow_service.is_book_borrowed(book_id=book_id):
-        print("해당 도서는 현재 대출중이므로 삭제할 수 없습니다.")
-        return None
 
     if confirm:
         book_service.delete_book(book_id=book_id)
