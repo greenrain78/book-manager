@@ -65,7 +65,6 @@ def search_by_category_prompt(book_service: BookService, cat_service: CategorySe
         )
         if keyword:
             break
-    #todo
     # # 기획서에 있는 내용을 충족하기 위해 동일한 연산을 2번 수행
     # # cat_service.search_category_by_name으로 조회, 연산자를 기준으로 list로 분리 후 각각 조회
     # # 존재하지 않는 카테고리명입니다

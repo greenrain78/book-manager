@@ -36,13 +36,18 @@ def handle_prompt(app: AppContext, prompt_type: PromptType) -> PromptType:
 
     elif prompt_type == PromptType.ADMIN_MENU:
         return admin_prompt()
-
     elif prompt_type == PromptType.ADMIN_BOOK_ADD:
         add_book_prompt(book_service=app.book_service)
         return PromptType.ADMIN_MENU
+    elif prompt_type == PromptType.ADMIN_BOOK_MODIFY:
+        modify_book_prompt(book_service=app.book_service)
+        return PromptType.ADMIN_MENU
+    elif prompt_type == PromptType.ADMIN_BOOK_DELETE:
+        delete_book_prompt(book_service=app.book_service, borrow_service=app.borrow_service)
+        return PromptType.ADMIN_MENU
 
     elif prompt_type == PromptType.SEARCH_CATEGORY:
-        search_by_category_prompt(book_service=app.book_service)
+        search_by_category_prompt(book_service=app.book_service, cat_service=app.cat_service)
         return PromptType.SEARCH_MENU
 
     elif prompt_type == PromptType.EXIT:
@@ -60,12 +65,7 @@ def handle_prompt(app: AppContext, prompt_type: PromptType) -> PromptType:
         return_prompt(book_service=app.book_service, borrow_service=app.borrow_service)
         return PromptType.USER_MENU
 
-    elif prompt_type == PromptType.ADMIN_BOOK_MODIFY:
-        modify_book_prompt(book_service=app.book_service)
-        return PromptType.ADMIN_MENU
-    elif prompt_type == PromptType.ADMIN_BOOK_DELETE:
-        delete_book_prompt(book_service=app.book_service, borrow_service=app.borrow_service)
-        return PromptType.ADMIN_MENU
+
     elif prompt_type == PromptType.CATEGORY_MENU:
         return category_prompt()
     elif prompt_type == PromptType.CATEGORY_ADD:
