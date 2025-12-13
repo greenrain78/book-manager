@@ -52,15 +52,8 @@ def add_book_prompt(book_service) -> None:
         if author:
             break
 
-    print(f"[추가할 도서 정보]")
-    print(f"도서명: {title}")
-    print(f"저자: {author}")
-    confirm = yes_no_prompt(f"정말 추가 하시겠습니까?(Y,N):", error_msg="잘못된 입력입니다!! Y/N중 하나를 입력하세요.")
-    if confirm:
-        book_service.add_book(title=title, author=author)
-        print(f"해당 도서를 추가했습니다.")
-    else:
-        print(f"해당 도서를 추가하지 않았습니다.")
+    book_service.add_book(title=title, author=author)
+    print(f"책 추가했습니다.")
     return None
 
 

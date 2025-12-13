@@ -5,6 +5,7 @@ from src.controller.navi import run_app_navigation
 from src.prompt.start import date_input_prompt
 from src.service.book_service import BookService
 from src.service.borrow_service import BorrowService
+from src.service.cat_service import CategoryService
 from src.service.user_service import UserService
 
 logging.basicConfig(
@@ -23,6 +24,7 @@ if __name__ == '__main__':
     app.book_service = BookService(app=app)
     app.user_service = UserService(app=app)
     app.borrow_service = BorrowService(app=app)
+    app.cat_service = CategoryService(app=app)
 
     # 날짜 입력
     date_input_prompt(app=app)
