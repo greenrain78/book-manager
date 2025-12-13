@@ -11,6 +11,7 @@ from src.repository.manager import UsersRepository, BooksRepository, BorrowRepos
     ISBNRepository, CategoryRepository
 from src.service.book_service import BookService
 from src.service.borrow_service import BorrowService
+from src.service.cat_service import CategoryService
 from src.service.user_service import UserService
 
 
@@ -192,6 +193,7 @@ class SystemTestBase(unittest.TestCase):
         app.book_service = BookService(app=app)
         app.user_service = UserService(app=app)
         app.borrow_service = BorrowService(app=app)
+        app.cat_service = CategoryService(app=app)
         return app
 
     # borrow_prompt 실행 + 출력 캡처

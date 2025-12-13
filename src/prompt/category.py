@@ -10,6 +10,13 @@ def add_category_prompt(cat_service: CategoryService) -> None:
     """
     카테고리 추가 프롬프트.
     """
+    # 카테고리 20개
+    # 카테고리가 너무 많습니다.
+    # 도서가 20권인지 확인
+    if len(cat_service.cat_repo.data) >= 20:
+        print("카테고리가 너무 많습니다.")
+        return None
+
     while True:
         cat_name = input_with_validation(
             "추가할 카테고리명을 입력해주세요: ",

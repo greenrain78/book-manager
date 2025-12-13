@@ -20,7 +20,7 @@ class SystemTest1(SystemTestBase):
     #             "users": ["java|12341234|test@gmail.com|"],
     #             "books": ["001|ISBN01"],
     #             "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-    #             "cats": ["CAT00|general"],
+    #             "cats": ["CAT00|uncategorized"],
     #             "borrow": [],
     #             "borrow_hist": [],
     #         },
@@ -50,7 +50,7 @@ class SystemTest1(SystemTestBase):
                 "users": ["java|12341234|test@gmail.com|"],
                 "books": ["001|ISBN01"],
                 "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|general"],
+                "cats": ["CAT00|uncategorized"],
                 "borrow": [],
                 "borrow_hist": [],
             },
@@ -85,7 +85,7 @@ class SystemTest1(SystemTestBase):
                 "users": ["java|12341234|test@gmail.com|"],
                 "books": ["001|ISBN01"],
                 "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|general"],
+                "cats": ["CAT00|uncategorized"],
                 "borrow": [],
                 "borrow_hist": [],
             },
@@ -127,7 +127,7 @@ class SystemTest1(SystemTestBase):
                     "015|ISBN01", "016|ISBN01", "017|ISBN01", "018|ISBN01", "019|ISBN01", "020|ISBN01",
                 ],
                 "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|general"],
+                "cats": ["CAT00|uncategorized"],
                 "borrow": [],
                 "borrow_hist": [],
             },
@@ -162,7 +162,7 @@ class SystemTest1(SystemTestBase):
                     "001|ISBN01",
                 ],
                 "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|general"],
+                "cats": ["CAT00|uncategorized"],
                 "borrow": [],
                 "borrow_hist": [
                     "001|gw5621|2025-01-01|2025-01-08|2025-01-01",
@@ -194,7 +194,7 @@ class SystemTest1(SystemTestBase):
                     "001|ISBN01",
                 ],
                 "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|general"],
+                "cats": ["CAT00|uncategorized"],
                 "borrow": [],
                 "borrow_hist": [],
             },
@@ -228,7 +228,7 @@ class SystemTest1(SystemTestBase):
                     "001|ISBN01",
                 ],
                 "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|general"],
+                "cats": ["CAT00|uncategorized"],
                 "borrow": [],
                 "borrow_hist": [],
             },
@@ -265,7 +265,7 @@ class SystemTest1(SystemTestBase):
                     "001|ISBN01",
                 ],
                 "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|general"],
+                "cats": ["CAT00|uncategorized"],
                 "borrow": [],
                 "borrow_hist": [],
             },
@@ -289,6 +289,47 @@ class SystemTest1(SystemTestBase):
             output,
             expected_output_keywords=[
                 "잘못된 입력입니다!! 올바른 제목을 입력하세요."
+            ],
+
+        )
+
+    def test_9(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN01",
+                ],
+                "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
+                "cats": [
+                    "CAT00|uncategorized", "CAT01|science", "CAT02|space", "CAT03|history", "CAT04|art", "CAT05|technology",
+                    "CAT06|mathematics", "CAT07|literature", "CAT08|philosophy", "CAT09|psychology", "CAT10|education",
+                    "CAT11|health", "CAT12|travel", "CAT13|cooking", "CAT14|sports", "CAT15|business", "CAT16|economics",
+                    "CAT17|politics", "CAT18|environment", "CAT19|culture", "CAT20|religion"
+                ],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "admin",    # 아이디
+                "12341234", # 비밀번호
+                "4",        # 카테고리 관리
+                "1",        # 카테고리 추가
+                "6"         # 뒤로가기
+                "5",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "카테고리가 너무 많습니다."
             ],
 
         )
