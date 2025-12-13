@@ -73,7 +73,7 @@ def delete_category_prompt(cat_service: CategoryService) -> None:
         print("존재하지 않는 카테고리입니다.")
         return
 
-    for isbn in cat.cat_repo.data:
+    for isbn in cat_service.isbn_repo.data:
         # 현재 카테고리ID 목록에서 삭제할 카테고리ID 제거
         current_cat_ids = isbn.cat_id.split(';')
         if not cat.cat_id in current_cat_ids:
@@ -84,12 +84,13 @@ def delete_category_prompt(cat_service: CategoryService) -> None:
         if not current_cat_ids:
             current_cat_ids.append("CAT00")
         isbn.cat_id = ';'.join(current_cat_ids)
+    cat_service.isbn_repo.save_all()
 
     cat_service.cat_repo.delete(cat.cat_id)
 
     print(f"삭제대상 카테고리")
     print(f"{cat.cat_id} {cat.cat_name}")
-    print(f"성공적으로 삭제했습니다.")
+    print(f"해당 카테고리를 삭제했습니다.")
 
 def merge_category_prompt(cat_service: CategoryService) -> None:
     """

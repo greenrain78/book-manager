@@ -251,9 +251,11 @@ class CategoryRepository(BaseRepository):
                 return item
         return None
 
-    def find_by_name(self, keyword: str):
-        keyword_lower = keyword.lower()
-        return [item for item in self.data if keyword_lower in item.cat_name.lower()]
+    def find_by_name(self, name: str):
+        for item in self.data:
+            if item.cat_name == name:
+                return item
+        return None
 
     def get_all_categories(self):
         return self.data
