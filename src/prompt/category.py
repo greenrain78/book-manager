@@ -194,7 +194,8 @@ def modify_category_prompt(cat_service: CategoryService) -> None:
                 (lambda x: x != "uncategorized", "uncategorized로는 수정할 수 없습니다."),
                 # 이미 존재하는 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: not cat_service.category_exists(x), "이미 존재하는 카테고리명입니다. 다시 입력해주세요."),
-            ]
+            ],
+            strip=False
         )
         if new_cat_name == "uncategorized":
             print("uncategorized는 수정할 수 없습니다.")
