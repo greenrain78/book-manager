@@ -195,6 +195,10 @@ def assign_category_prompt(cat_service: CategoryService, book_service: BookServi
     :param cat_service:
     :return:
     """
+    if len(cat_service.cat_repo.data) == 1 and cat_service.cat_repo.data[0].cat_name == "uncategorized":
+        print("카테고리가 너무 적습니다. 카테고리 추가하고 다시 시도해주세요.")
+        return
+
     while True:
         isbn = input_with_validation(
             "카테고리를 추가할 ISBN을 입력하세요:",

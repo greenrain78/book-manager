@@ -333,3 +333,143 @@ class SystemTest1(SystemTestBase):
             ],
 
         )
+
+    def test_10(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN01",
+                ],
+                "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
+                "cats": ["CAT00|uncategorized"],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "admin",    # 아이디
+                "12341234", # 비밀번호
+                "4",        # 카테고리 관리
+                "7",        # 없음
+                "6"         # 뒤로가기
+                "5",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "입력에 해당하는 명령어가 없습니다. 다시 입력해 주세요."
+            ],
+        )
+    def test_11(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN01",
+                ],
+                "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
+                "cats": ["CAT00|uncategorized"],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "admin",    # 아이디
+                "12341234", # 비밀번호
+                "4",        # 카테고리 관리
+                "1 1",        # 없음
+                "6"         # 뒤로가기
+                "5",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "모든 명령어에는 인자가 필요하지 않습니다. 다시 입력해 주세요."
+            ],
+        )
+    def test_12(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN01",
+                ],
+                "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
+                "cats": ["CAT00|uncategorized"],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "admin",    # 아이디
+                "12341234", # 비밀번호
+                "4",        # 카테고리 관리
+                "5",        # 카테고리 부여
+                # 부여할 카테고리가 없음
+                "6"         # 뒤로가기
+                "5",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "카테고리가 너무 적습니다. 카테고리 추가하고 다시 시도해주세요."
+            ],
+        )
+
+    def test_12(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN01",
+                ],
+                "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
+                "cats": ["CAT00|uncategorized"],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "admin",    # 아이디
+                "12341234", # 비밀번호
+                "4",        # 카테고리 관리
+                "5",        # 카테고리 부여
+                # 부여할 카테고리가 없음
+                "6"         # 뒤로가기
+                "5",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "카테고리가 너무 적습니다. 카테고리 추가하고 다시 시도해주세요."
+            ],
+        )
