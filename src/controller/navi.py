@@ -4,7 +4,7 @@ from src.context import AppContext
 from src.controller.prompt import PromptType
 from src.prompt.admin import add_book_prompt, modify_book_prompt, delete_book_prompt
 from src.prompt.category import add_category_prompt, delete_category_prompt, modify_category_prompt, merge_category_prompt, assign_category_prompt
-from src.prompt.menu import user_prompt, search_prompt, main_prompt, admin_prompt
+from src.prompt.menu import user_prompt, search_prompt, main_prompt, admin_prompt, category_prompt
 from src.prompt.search import search_by_book_prompt, search_by_category_prompt
 from src.prompt.start import login_prompt, signup_prompt
 from src.prompt.user import borrow_prompt, return_prompt
@@ -66,10 +66,8 @@ def handle_prompt(app: AppContext, prompt_type: PromptType) -> PromptType:
     elif prompt_type == PromptType.ADMIN_BOOK_DELETE:
         delete_book_prompt(book_service=app.book_service, borrow_service=app.borrow_service)
         return PromptType.ADMIN_MENU
-
     elif prompt_type == PromptType.CATEGORY_MENU:
-        return PromptType.ADMIN_MENU
-
+        return category_prompt()
     elif prompt_type == PromptType.CATEGORY_ADD:
         add_category_prompt(cat_service=app.cat_service)
         return PromptType.CATEGORY_MENU

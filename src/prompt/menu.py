@@ -32,7 +32,7 @@ def main_prompt() -> PromptType:
                 print("잘못된 입력입니다!! 1,2,3 중 하나를 입력하세요.")
         except Exception as e:
             # 방어코드가 아닌 로깅용 코드
-            log.error(f"메인 프롬프트 오류: {e}")
+            # log.error(f"메인 프롬프트 오류: {e}")
             print("오류가 발생했습니다!! 다시 시도하세요.")
 
 

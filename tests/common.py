@@ -125,6 +125,7 @@ import unittest
 from unittest.mock import patch
 
 from src.context import AppContext
+import logging
 
 
 class SystemTestBase(unittest.TestCase):
@@ -132,6 +133,8 @@ class SystemTestBase(unittest.TestCase):
     ENABLE_FILE_CLEANUP = True
 
     def setUp(self):
+        logging.disable(logging.CRITICAL)
+
         if self.ENABLE_FILE_CLEANUP:
             self.tmpdir = tempfile.TemporaryDirectory()
             base = self.tmpdir.name

@@ -17,24 +17,25 @@ def date_input_prompt(app: AppContext) -> None:
     :return:
     """
     # 날짜 형식 무결성 검사
-    min_date: datetime | None = None
+    max_date: datetime | None = None
 
     # BorrowRepository
     for borrow in app.borrow_repo.data:
         current = datetime.strptime(borrow.borrow_date, "%Y-%m-%d")
-        if min_date is None or current < min_date:
-            min_date = current
+        if max_date is None or current > max_date:
+            max_date = current
 
     # BorrowHistoryRepository
     for history in app.borrow_history_repo.data:
         for date_str in [history.borrow_date, history.return_date]:
             current = datetime.strptime(date_str, "%Y-%m-%d")
-            if min_date is None or current < min_date:
-                min_date = current
-    min_date_str = "" if min_date is None else f"{min_date.strftime('%Y-%m-%d')} 이후의 날짜만 입력가능합니다"
+            if max_date is None or current > max_date:
+                max_date = current
+
+    max_date_str = "" if max_date is None else f"{max_date.strftime('%Y-%m-%d')} 이후의 날짜만 입력가능합니다"
     while True:
         date_str = input_with_validation(
-            f"날짜를 입력하세요.{min_date_str}(YYYY-MM-DD):",
+            f"날짜를 입력하세요.{max_date_str}(YYYY-MM-DD):",
             [
                 (is_valid_date_format, "잘못된 입력입니다!! 올바른 날짜를 입력하세요."),
             ]
@@ -45,7 +46,7 @@ def date_input_prompt(app: AppContext) -> None:
             lambda v: datetime.strptime(v, "%Y-%m-%d"),
             "잘못된 입력입니다!! 올바른 날짜를 입력하세요.",
             [
-                (lambda v: min_date is None or v >= min_date, f"이전 날짜를 입력했습니다!! 올바른 날짜를 입력하세요."),
+                (lambda v: max_date is None or v >= max_date, f"이전 날짜를 입력했습니다!! 올바른 날짜를 입력하세요."),
             ]
         )
         if now_date is not None:
