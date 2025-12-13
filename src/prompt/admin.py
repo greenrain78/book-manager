@@ -68,11 +68,12 @@ def delete_book_prompt(book_service: BookService, borrow_service: BorrowService)
         book_id = input_with_validation(
             "삭제할 도서의 고유번호(BookId)를 입력하세요:",
             [
-                # 고유번호는 숫자 3자리 입니다. EX:001,011,111
-                (lambda v: v.isdigit() and len(v) == 3, "고유번호는 숫자 3자리 입니다. EX:001,011,111"),
                 # 고유번호는 공백을 포함하지 않습니다
                 (lambda v: ' ' not in v, "고유번호는 공백을 포함하지 않습니다"),
-            ]
+                # 고유번호는 숫자 3자리 입니다. EX:001,011,111
+                (lambda v: v.isdigit() and len(v) == 3, "고유번호는 숫자 3자리 입니다. EX:001,011,111"),
+            ],
+            strip=False
         )
         if book_id:
             break
@@ -122,13 +123,15 @@ def modify_book_prompt(book_service: BookService) -> None:
                 # 공백 포함 불가
                 (lambda v: " " not in v,
                  "입력에 공백을 포함할 수 없습니다. 다시 입력해주세요."),
-                # 존재 여부 검사
-                (lambda v: book_service.isbn_repo.find(v) is not None,
-                 "존재하지 않는 ISBN입니다."),
+
             ]
         )
         if isbn:
             break
+    # 존재 여부 검사
+    if not book_service.isbn_repo.find(isbn):
+        print("존재하지 않는 ISBN입니다.")
+        return None
 
     isbn_obj = book_service.isbn_repo.find(isbn)
     print(f"[수정할 도서 정보]")
