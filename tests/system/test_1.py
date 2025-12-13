@@ -426,7 +426,7 @@ class SystemTest1(SystemTestBase):
                 "4",        # 카테고리 관리
                 "5",        # 카테고리 부여
                 # 부여할 카테고리가 없음
-                "6"         # 뒤로가기
+                "6",         # 뒤로가기
                 "5",       # 로그아웃
                 "3",        # 종료
             ])
@@ -438,7 +438,7 @@ class SystemTest1(SystemTestBase):
             ],
         )
 
-    def test_12(self):
+    def test_13(self):
         # 파일 준비
         app = self.prepare_test_context(
             file_data={
@@ -447,7 +447,7 @@ class SystemTest1(SystemTestBase):
                     "001|ISBN01",
                 ],
                 "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|uncategorized"],
+                "cats": ["CAT00|uncategorized", "CAT01|computer"],
                 "borrow": [],
                 "borrow_hist": [],
             },
@@ -460,9 +460,9 @@ class SystemTest1(SystemTestBase):
                 "admin",    # 아이디
                 "12341234", # 비밀번호
                 "4",        # 카테고리 관리
-                "5",        # 카테고리 부여
-                # 부여할 카테고리가 없음
-                "6"         # 뒤로가기
+                "2",        # 카테고리 삭제
+                "math",
+                "6",         # 뒤로가기
                 "5",       # 로그아웃
                 "3",        # 종료
             ])
@@ -470,6 +470,6 @@ class SystemTest1(SystemTestBase):
         self.assert_after_prompt(
             output,
             expected_output_keywords=[
-                "카테고리가 너무 적습니다. 카테고리 추가하고 다시 시도해주세요."
+                "존재하지 않는 카테고리입니다."
             ],
         )

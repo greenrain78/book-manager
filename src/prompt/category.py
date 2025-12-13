@@ -64,8 +64,27 @@ def delete_category_prompt(cat_service: CategoryService) -> None:
         )
         if cat_name:
             break
+    if cat_name == "uncategorized":
+        print("uncategorized는삭제할 수 없습니다.")
+        return
 
     cat = cat_service.search_category_by_name(cat_name)
+    if not cat:
+        print("존재하지 않는 카테고리입니다.")
+        return
+
+    for isbn in cat.cat_repo.data:
+        # 현재 카테고리ID 목록에서 삭제할 카테고리ID 제거
+        current_cat_ids = isbn.cat_id.split(';')
+        if not cat.cat_id in current_cat_ids:
+            continue # 없으면 패스
+        if cat.cat_id in current_cat_ids:
+            current_cat_ids.remove(cat.cat_id)
+        # 카테고리가 하나도 없으면 uncategorized 부여
+        if not current_cat_ids:
+            current_cat_ids.append("CAT00")
+        isbn.cat_id = ';'.join(current_cat_ids)
+
     cat_service.cat_repo.delete(cat.cat_id)
 
     print(f"삭제대상 카테고리")
