@@ -602,5 +602,40 @@ class SystemTest1(SystemTestBase):
                 "cats": ["CAT01|computer"],
             }
         )
+    def test_17(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN01",
+                ],
+                "isbn": ["ISBN01|papa|tae|CAT01;CAT02;CAT03"],
+                "cats": ["CAT00|uncategorized", "CAT01|computer"],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "admin",    # 아이디
+                "12341234", # 비밀번호
+                "4",        # 카테고리 관리
+                "1",        # 카테고리 추가
+                "computer",
+                "6",         # 뒤로가기
+                "5",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                " "
+            ],
+        )
 
 

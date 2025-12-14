@@ -26,7 +26,7 @@ def add_category_prompt(cat_service: CategoryService) -> None:
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
                 # 이미 존재하는 카테고리명입니다. 다시 입력해주세요.
-                (lambda x: cat_service.category_exists(x), "이미 존재하는 카테고리명입니다. 다시 입력해주세요."),
+                (lambda x: not cat_service.category_exists(x), "이미 존재하는 카테고리명입니다. 다시 입력해주세요."),
                  # uncategorized는 카테고리명으로 추가할 수 없습니다. 다시입력해주세요.
                 (lambda x: x != "uncategorized", "uncategorized는 카테고리명으로 추가할 수 없습니다. 다시입력해주세요."),
             ],
