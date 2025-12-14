@@ -87,7 +87,7 @@ def return_prompt(book_service: BookService, borrow_service: BorrowService) -> N
             "반납할 책의 고유번호를 입력해주세요:",
             [
                 (lambda v: ' ' not in v, "고유번호는 공백을 포함하지 않습니다"),
-                (is_vaild_book_id, "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
+                (is_vaild_book_id, "고유번호는 숫자 3자리 입니다. EX:001,011,111."),
             ],
             strip=False,
         )
