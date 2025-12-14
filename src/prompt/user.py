@@ -105,10 +105,6 @@ def return_prompt(book_service: BookService, borrow_service: BorrowService) -> N
         print(f"사용자가 반납을 취소했습니다.")
         return None
     borrow_service.return_book(borrow=borrow)
-    penalty_date = borrow_service.get_user_penalty_date()
-    if penalty_date:
-        print(f"책이 연체되었습니다. 제재 기간은 {penalty_date.strftime('%Y-%m-%d')}입니다.")
-
     print(f"정상적으로 반납이 완료되었습니다.")
 
 

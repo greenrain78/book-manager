@@ -54,6 +54,7 @@ class BorrowService:
                 user_id=user.user_id,
                 new_penaltyDate=user.penaltyDate
             )
+            print(f"책이 연체되었습니다. 제재 기간은 {user.penaltyDate}입니다.")
 
         # 대출 내역에서 해당 도서 삭제
         self.borrow_repo.delete(book_id=borrow.book_id)

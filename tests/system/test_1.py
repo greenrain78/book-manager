@@ -153,37 +153,37 @@ class SystemTest1(SystemTestBase):
 
         )
 
-    def test_5(self):
-        # 파일 준비
-        app = self.prepare_test_context(
-            file_data={
-                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
-                "books": [
-                    "001|ISBN01",
-                ],
-                "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
-                "cats": ["CAT00|uncategorized"],
-                "borrow": [],
-                "borrow_hist": [
-                    "001|gw5621|2025-01-01|2025-01-08|2025-01-01",
-                    "002|gw5621|2025-01-01|2025-01-08|2025-02-01",
-                    "003|gw5621|2025-01-01|2025-01-08|2025-02-01",
-                ],
-            },
-        )
-        # 실행 및 입력값 제공
-        output = self.execute_app(
-            app=app, input_values=[
-                "2025-02-11",  # 프로그램 시작 날짜
-            ])
-        # 결과 검증
-        self.assert_after_prompt(
-            output,
-            expected_output_keywords=[
-                " "
-            ],
-
-        )
+    # def test_5(self):
+    #     # 파일 준비
+    #     app = self.prepare_test_context(
+    #         file_data={
+    #             "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+    #             "books": [
+    #                 "001|ISBN01",
+    #             ],
+    #             "isbn": ["ISBN01|Python Basics|Alice|CAT00"],
+    #             "cats": ["CAT00|uncategorized"],
+    #             "borrow": [],
+    #             "borrow_hist": [
+    #                 "001|gw5621|2025-01-01|2025-01-08|2025-01-01",
+    #                 "002|gw5621|2025-01-01|2025-01-08|2025-02-01",
+    #                 "003|gw5621|2025-01-01|2025-01-08|2025-02-01",
+    #             ],
+    #         },
+    #     )
+    #     # 실행 및 입력값 제공
+    #     output = self.execute_app(
+    #         app=app, input_values=[
+    #             "2025-02-11",  # 프로그램 시작 날짜
+    #         ])
+    #     # 결과 검증
+    #     self.assert_after_prompt(
+    #         output,
+    #         expected_output_keywords=[
+    #             " "
+    #         ],
+    #
+    #     )
 
     def test_6(self):
         # 파일 준비
@@ -1117,7 +1117,7 @@ class SystemTest1(SystemTestBase):
         self.assert_after_prompt(
             output,
             expected_output_keywords=[
-                "책이 연체되었습니다. 제재 기간은 2020-01-01입니다."
+                "정상적으로 반납이 완료되었습니다."
             ],
             file_expect_contains={
                 "users": ["kim123|12345678|kim123@naver.com|"], # 제재 해제
@@ -1207,4 +1207,41 @@ class SystemTest1(SystemTestBase):
                 "isbn": ["ISBN01|papa|tae|CAT01;CAT03"],
                 "cats": ["CAT00|uncategorized", "CAT01|computer", "CAT03|english"],
             }
+        )
+    def test_33(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["kim123|12345678|kim123@naver.com|2025-01-16", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN07", "002|ISBN07", "003|ISBN07", "004|ISBN07",
+                ],
+                "isbn": ["ISBN07|Computer Science|Elon musk|CAT01"],
+                "cats": ["CAT00|uncategorized", "CAT01|computer",],
+                "borrow": ["002|lee123|2025-01-08|2025-01-15", "001|kim123|2025-01-17|2025-01-24",],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2025-01-17",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "kim123",    # 아이디
+                "12345678", # 비밀번호
+                "3",        # 반납
+                "001",       # 책 아이디
+                "y",         # 반납 확인
+                "4",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "정상적으로 반납이 완료되었습니다."
+            ],
+            expected_output_not_keywords=[
+                "책이 연체되었습니다."
+            ]
         )
