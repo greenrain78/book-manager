@@ -47,7 +47,11 @@ class CategoryService:
         if not cat1 or not cat2:
             raise ValueError("병합할 카테고리 중 하나 이상이 존재하지 않습니다.")
 
-        new_cat = self.add_category(new_cat_name)
+        # new가 존재하지 않으면 생성 존재하면 그대로 사용
+        new_cat = self.cat_repo.find_by_name(new_cat_name)
+        if not new_cat:
+            new_cat = self.add_category(new_cat_name)
+
         for isbn_obj in self.isbn_repo.data:
             cat_ids = isbn_obj.cat_id.split(';')
             if cat1.cat_id in cat_ids or cat2.cat_id in cat_ids:
