@@ -156,7 +156,7 @@ def merge_category_prompt(cat_service: CategoryService) -> None:
             strip=False
         )
         if new_cat_name == "uncategorized":
-            print("uncategorized는 카테고리명으로 사용할 수 없습니다.")
+            print("uncategorized는 병합할 수 없습니다.")
             return
         if new_cat_name:
             break
