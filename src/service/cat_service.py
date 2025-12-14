@@ -57,12 +57,22 @@ class CategoryService:
             if cat1.cat_id in cat_ids or cat2.cat_id in cat_ids:
                 # 기존 카테고리 ID 제거
                 cat_ids = [cid for cid in cat_ids if cid != cat1.cat_id and cid != cat2.cat_id]
-                # 새로운 카테고리 ID 추가
-                cat_ids.append(new_cat.cat_id)
+                # 새로운 카테고리 ID 추가 - 이미 있으면 추가하지 않음
+                if new_cat.cat_id not in cat_ids:
+                    cat_ids.append(new_cat.cat_id)
+                # 정렬 및 재설정
+                cat_ids.sort()
                 isbn_obj.cat_id = ';'.join(cat_ids)
+
+
+
         self.isbn_repo.save_all()
-        self.cat_repo.delete(cat1.cat_id)
-        self.cat_repo.delete(cat2.cat_id)
+        # 기존 카테고리 삭제 - 만약 new_cat 가 cat1 또는 cat2 라면 삭제하지 않음
+        if new_cat.cat_id != cat1.cat_id:
+            self.cat_repo.delete(cat1.cat_id)
+        if new_cat.cat_id != cat2.cat_id:
+            self.cat_repo.delete(cat2.cat_id)
+
         return new_cat
 
     # 카테고리 부여
