@@ -106,8 +106,7 @@ def merge_category_prompt(cat_service: CategoryService) -> None:
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
                 # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
                 (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
-                # 존재하지 않는 카테고리명입니다. 다시 입력해주세요.
-                (lambda x: cat_service.category_exists(x), "존재하지 않는 카테고리명입니다. 다시 입력해주세요."),
+
             ],
             strip=False
         )
@@ -115,8 +114,14 @@ def merge_category_prompt(cat_service: CategoryService) -> None:
             print("uncategorized는 병합할 수 없습니다.")
             return
 
+        if not cat_service.category_exists(cat_name1):
+            print("존재하지 않는 카테고리명입니다.")
+            return
+
         if cat_name1:
             break
+
+
     while True:
         cat_name2 = input_with_validation(
             "카테고리2: ",
@@ -125,8 +130,6 @@ def merge_category_prompt(cat_service: CategoryService) -> None:
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
                 # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
                 (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
-                # 존재하지 않는 카테고리명입니다. 다시 입력해주세요.
-                (lambda x: cat_service.category_exists(x), "존재하지 않는 카테고리명입니다. 다시 입력해주세요."),
                 # 카테고리1과 동일한 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: x != cat_name1, "카테고리1과 동일한 카테고리명입니다. 다시 입력해주세요."),
             ],
@@ -134,6 +137,9 @@ def merge_category_prompt(cat_service: CategoryService) -> None:
         )
         if cat_name2 == "uncategorized":
             print("uncategorized는 병합할 수 없습니다.")
+            return
+        if not cat_service.category_exists(cat_name2):
+            print("존재하지 않는 카테고리명입니다.")
             return
 
         if cat_name2:
