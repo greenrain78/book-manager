@@ -29,7 +29,8 @@ def borrow_prompt(book_service: BookService, borrow_service: BorrowService) -> N
             [
                 (lambda v: ' ' not in v, "고유번호는 공백을 포함하지 않습니다"),
                 (is_vaild_book_id, "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
-            ]
+            ],
+            strip=False,
         )
         if book_id:
             break
@@ -85,7 +86,8 @@ def return_prompt(book_service: BookService, borrow_service: BorrowService) -> N
             [
                 (lambda v: ' ' not in v, "고유번호는 공백을 포함하지 않습니다"),
                 (is_vaild_book_id, "존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요."),
-            ]
+            ],
+            strip=False,
         )
         if book_id:
             break
