@@ -9,6 +9,12 @@ from datetime import datetime
 
 # 대출
 def borrow_prompt(book_service: BookService, borrow_service: BorrowService) -> None:
+    #  제재 상황에선 책을 1권만 가질 수 있는데, 이미 1권 이상 가지고 있을 경우 추가
+    if borrow_service.get_user_penalty_date():
+        print("제재 상태에서는 책을 2권 이상 빌릴 수 없습니다!!")
+        return None
+
+
     while True:
         book_id = input_with_validation(
             "대출할 책의 고유번호를 입력하세요 :",
