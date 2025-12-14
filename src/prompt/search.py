@@ -54,12 +54,12 @@ def search_by_category_prompt(book_service: BookService, cat_service: CategorySe
                 (lambda v: all(not (v[i] in ['&', '|'] and (i == 0 or i == len(v) - 1 or v[i - 1] in ['&', '|', '!'] or v[i + 1] in ['&', '|', '!'])) for i in range(len(v))),
                  "AND, OR은 좌우에 각각 하나의 피연산자가 존재해야 합니다. 다시 입력해주세요."),
 
+                (lambda v: all(ch.islower() or ch.isupper()  or ch in ['!', '&', '|'] for ch in v), "허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요."),
+
                 # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
                 (lambda v: all(ch.islower() or ch in ['!', '&', '|'] for ch in v),
                  "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
 
-                # 허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요.
-                (lambda v: all(ch.islower() or ch in ['!', '&', '|'] for ch in v), "허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요."),
             ],
             strip = False,
         )

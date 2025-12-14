@@ -760,6 +760,80 @@ class SystemTest1(SystemTestBase):
         )
 
 
+    def test_21(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN01",
+                ],
+                "isbn": ["ISBN01|papa|tae|CAT01;CAT02;CAT03"],
+                "cats": ["CAT00|uncategorized", "CAT01|computer", "CAT02|math", "CAT03|english"],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "java",    # 아이디
+                "12341234", # 비밀번호
+                "1",        # 도서 검색
+                "2",        # 카테고리로 검색
+                "com+aaa",  # + 기호는 없음
+                "aaa", # 올바른 카테고리
+                "4",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "허용 가능한 연산자는 !,&,|입니다. 다시 입력해주세요."
+            ],
+        )
+
+
+    def test_22(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["java|12341234|test@gmail.com|", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN01",
+                ],
+                "isbn": ["ISBN01|papa|tae|CAT01;CAT02;CAT03"],
+                "cats": ["CAT00|uncategorized", "CAT01|computer", "CAT02|math", "CAT03|english"],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2020-11-11",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "java",    # 아이디
+                "12341234", # 비밀번호
+                "1",        # 도서 검색
+                "2",        # 카테고리로 검색
+                "Com",  # 대문자
+                "aaa", # 올바른 카테고리
+                "4",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."
+            ],
+        )
+
+
 
 
 
