@@ -18,11 +18,7 @@ def borrow_prompt(book_service: BookService, borrow_service: BorrowService) -> N
             new_penaltyDate=""
         )
 
-    # 사용자에 대한 대출 가능 여부 검사
-    if penalty_date and len(borrow_service.has_unreturned_books()) >= 1:
-        print("제재 상태에서는 책을 2권 이상 빌릴 수 없습니다!!")
-        print(f"제재 기간은 {penalty_date.strftime('%Y-%m-%d')}입니다.")
-        return None
+
     while True:
         book_id = input_with_validation(
             "대출할 책의 고유번호를 입력하세요 :",
@@ -34,6 +30,11 @@ def borrow_prompt(book_service: BookService, borrow_service: BorrowService) -> N
         )
         if book_id:
             break
+    # 사용자에 대한 대출 가능 여부 검사
+    if penalty_date and len(borrow_service.has_unreturned_books()) >= 1:
+        print("제재 상태에서는 책을 2권 이상 빌릴 수 없습니다!!")
+        print(f"제재 기간은 {penalty_date.strftime('%Y-%m-%d')}입니다.")
+        return None
 
     if not book_service.search_book_by_id(book_id):
         print("존재하지 않는 고유번호입니다!! 올바른 번호를 입력하세요.")
