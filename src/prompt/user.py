@@ -74,11 +74,13 @@ def return_prompt(book_service: BookService, borrow_service: BorrowService) -> N
         print(f"현재 대출한 도서가 없습니다.")
         return None
     print("[대출 중인 도서 정보] ")
+    print("--------------------")
     for borrow in borrowed_books:
         book = book_service.search_book_by_id(borrow.book_id)
         isbn = book_service.search_isbn(isbn=book.isbn)
         print(f"제목: {isbn.title}")
         print(f"저자: {isbn.author}")
+        print("--------------------")
 
     while True:
         book_id = input_with_validation(
