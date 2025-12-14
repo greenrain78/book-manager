@@ -1008,7 +1008,8 @@ class SystemTest1(SystemTestBase):
         self.assert_after_prompt(
             output,
             expected_output_keywords=[
-                "제재 상태에서는 책을 2권 이상 빌릴 수 없습니다!!"
+                "제재 상태에서는 책을 2권 이상 빌릴 수 없습니다!!",
+                "제재 기간은 2025-01-18입니다."
             ],
         )
 
