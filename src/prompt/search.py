@@ -77,7 +77,7 @@ def search_by_category_prompt(book_service: BookService, cat_service: CategorySe
     # 검색 수행
     isbns = cat_service.search_by_category(expr=keyword)
     if not isbns:
-        print("카테고리에 해당하는 도서가 존재하지 않습니다.")
+        print("존재하지 않는 카테고리명입니다")
         return None
     # 모든 books 가져오기
     books = []
