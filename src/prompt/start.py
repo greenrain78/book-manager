@@ -122,23 +122,19 @@ def login_prompt(user_service: UserService, app: AppContext) -> PromptType:
         user_id = input_with_validation(
             "ID를 입력하세요: ",
             [
-                # 공백 문자를 포함
-                (lambda v: ' ' not in v, "존재하지 않는 ID 입니다!!  ID를 다시 입력하세요."),
-
             ],
             retry=False,
             strip=False
         )
         if user_id:
             break
-    #
+    if not is_valid_user_id(user_id=user_id):
+        print(f"잘못된 ID입니다.")
+        return PromptType.MAIN_MENU
     if not user_service.exist_user_id(user_id=user_id):
         print(f"존재하지 않는 ID입니다!!  ID를 다시 입력하세요.")
         return PromptType.MAIN_MENU
 
-    if not is_valid_user_id(user_id=user_id):
-        print(f"잘못된 ID입니다.")
-        return PromptType.MAIN_MENU
 
     log.debug(f"사용 가능한 ID 입력: {user_id}")
     user = user_service.get_user_by_id(user_id=user_id) # 사용자 정보 조회
