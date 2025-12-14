@@ -172,11 +172,10 @@ def modify_category_prompt(cat_service: CategoryService) -> None:
         cat_name = input_with_validation(
             "수정할 카테고리명을 입력해주세요: ",
             [
-                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
-                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
-
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                  # uncategorized는수정할 수 없습니다.
                 (lambda x: x != "uncategorized", "uncategorized는수정할 수 없습니다."),
             ],
@@ -193,10 +192,10 @@ def modify_category_prompt(cat_service: CategoryService) -> None:
         new_cat_name = input_with_validation(
             "새로운 카테고리: ",
             [
-                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
-                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요"),
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # uncategorized로는 수정할 수 없습니다
                 (lambda x: x != "uncategorized", "uncategorized로는 수정할 수 없습니다."),
                 # 이미 존재하는 카테고리명입니다. 다시 입력해주세요.
