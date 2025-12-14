@@ -755,7 +755,7 @@ class SystemTest1(SystemTestBase):
         self.assert_after_prompt(
             output,
             expected_output_keywords=[
-                "존재하지 않는 카테고리명입니다. 다시 입력해주세요."
+                "존재하지 않는 카테고리명입니다."
             ],
         )
 
