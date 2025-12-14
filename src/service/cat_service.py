@@ -56,7 +56,9 @@ class CategoryService:
                 # 새로운 카테고리 ID 추가
                 cat_ids.append(new_cat.cat_id)
                 isbn_obj.cat_id = ';'.join(cat_ids)
-
+        self.isbn_repo.save_all()
+        self.cat_repo.delete(cat1.cat_id)
+        self.cat_repo.delete(cat2.cat_id)
         return new_cat
 
     # 카테고리 부여
