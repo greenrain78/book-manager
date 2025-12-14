@@ -59,8 +59,6 @@ def delete_category_prompt(cat_service: CategoryService) -> None:
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
                 # 존재하지 않는 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: cat_service.category_exists(x), "존재하지 않는 카테고리명입니다. 다시 입력해주세요."),
-                 # uncategorized는삭제할 수 없습니다.
-                (lambda x: x != "uncategorized", "uncategorized는삭제할 수 없습니다."),
             ],
             strip=False
         )
