@@ -21,10 +21,10 @@ def add_category_prompt(cat_service: CategoryService) -> None:
         cat_name = input_with_validation(
             "추가할 카테고리명을 입력해주세요: ",
             [
-                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
-                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 이미 존재하는 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: not cat_service.category_exists(x), "이미 존재하는 카테고리명입니다. 다시 입력해주세요."),
                  # uncategorized는 카테고리명으로 추가할 수 없습니다. 다시입력해주세요.
@@ -53,10 +53,10 @@ def delete_category_prompt(cat_service: CategoryService) -> None:
         cat_name = input_with_validation(
             "삭제할 카테고리명을 입력해주세요: ",
             [
-                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
-                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 존재하지 않는 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: cat_service.category_exists(x), "존재하지 않는 카테고리명입니다."),
             ],
@@ -104,10 +104,10 @@ def merge_category_prompt(cat_service: CategoryService) -> None:
         cat_name1 = input_with_validation(
             "병합할 카테고리명을 입력해주세요\n카테고리1: ",
             [
-                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
-                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 존재하지 않는 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: cat_service.category_exists(x), "존재하지 않는 카테고리명입니다. 다시 입력해주세요."),
             ],
@@ -123,10 +123,10 @@ def merge_category_prompt(cat_service: CategoryService) -> None:
         cat_name2 = input_with_validation(
             "카테고리2: ",
             [
-                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
-                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 존재하지 않는 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: cat_service.category_exists(x), "존재하지 않는 카테고리명입니다. 다시 입력해주세요."),
                 # 카테고리1과 동일한 카테고리명입니다. 다시 입력해주세요.
@@ -144,10 +144,10 @@ def merge_category_prompt(cat_service: CategoryService) -> None:
         new_cat_name = input_with_validation(
             "새로운 카테고리명을 입력해주세요: ",
             [
-                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
-                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 이미 존재하는 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: not cat_service.category_exists(x), "이미 존재하는 카테고리명입니다. 다시 입력해주세요."),
             ],
@@ -230,10 +230,11 @@ def assign_category_prompt(cat_service: CategoryService, book_service: BookServi
         isbn = input_with_validation(
             "카테고리를 추가할 ISBN을 입력하세요:",
             [
+                #     입력에 공백을 포함할 수 없습니다. 다시입력해주세요.
+                (lambda x: ' ' not in x, "입력에 공백을 포함할 수 없습니다. 다시입력해주세요."),
                 # 입력형식은ISBN+숫자2개(0~9)입니다. 다시입력해주세요.
                 (lambda x: x.startswith("ISBN") and len(x) == 6 and x[4:6].isdigit(), "입력형식은ISBN+숫자2개(0~9)입니다. 다시입력해주세요."),
-            #     입력에 공백을 포함할 수 없습니다. 다시입력해주세요.
-                (lambda x: ' ' not in x, "입력에 공백을 포함할 수 없습니다. 다시입력해주세요."),
+
             ],
             strip=False
         )
@@ -259,10 +260,10 @@ def assign_category_prompt(cat_service: CategoryService, book_service: BookServi
         cat_name = input_with_validation(
             "추가할 카테고리명을 입력해주세요: ",
             [
-                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
-                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
+                # 카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요.
+                (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 존재하지 않는 카테고리명입니다. 다시 입력해주세요.
                 (lambda x: cat_service.category_exists(x), "존재하지 않는 카테고리명입니다. 다시 입력해주세요."),
             ],
