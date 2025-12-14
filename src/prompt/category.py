@@ -176,8 +176,7 @@ def modify_category_prompt(cat_service: CategoryService) -> None:
                 (lambda x: x.islower() and x.isalpha(), "카테고리명은 로마자 소문자만 입력받을 수 있습니다. 다시 입력해주세요."),
                 # 카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요.
                 (lambda x: ' ' not in x, "카테고리명은 공백을 포함하지않습니다. 다시 입력해주세요."),
-                # 존재하지 않는 카테고리명입니다. 다시 입력해주세요.
-                (lambda x: cat_service.category_exists(x), "존재하지 않는 카테고리명입니다."),
+
                  # uncategorized는수정할 수 없습니다.
                 (lambda x: x != "uncategorized", "uncategorized는수정할 수 없습니다."),
             ],
@@ -185,6 +184,10 @@ def modify_category_prompt(cat_service: CategoryService) -> None:
         )
         if cat_name:
             break
+    # 존재하지 않는 카테고리명입니다.
+    if not cat_service.category_exists(cat_name):
+        print("존재하지 않는 카테고리명입니다.")
+        return
 
     while True:
         new_cat_name = input_with_validation(
