@@ -9,8 +9,9 @@ from datetime import datetime
 
 # 대출
 def borrow_prompt(book_service: BookService, borrow_service: BorrowService) -> None:
+    # 사용자에 대한 대출 가능 여부 검사
     penalty_date = borrow_service.get_user_penalty_date()
-    if penalty_date:
+    if penalty_date and len(borrow_service.has_unreturned_books()) >= 1:
         print("제재 상태에서는 책을 2권 이상 빌릴 수 없습니다!!")
         print(f"제재 기간은 {penalty_date.strftime('%Y-%m-%d')}입니다.")
         return None
@@ -33,12 +34,6 @@ def borrow_prompt(book_service: BookService, borrow_service: BorrowService) -> N
         print("이미 대출중인 도서입니다!! 다른 책을 입력하세요.")
         return None
 
-    # 사용자에 대한 대출 가능 여부 검사
-    penatly_date = borrow_service.get_user_penalty_date()
-    if penatly_date:
-        print("제재 상태에서는 책을 1권 이상 빌릴 수 없습니다!!")
-        print(f"제재 기간은 {penatly_date.strftime('%Y-%m-%d')}입니다.")
-        return None
 
     # 대출 중인 책 있는지 검사 - 최대 3권까지 대출 가능
     borrowed_books = borrow_service.has_unreturned_books()

@@ -1013,4 +1013,40 @@ class SystemTest1(SystemTestBase):
             ],
         )
 
+    def test_28(self):
+        # 파일 준비
+        app = self.prepare_test_context(
+            file_data={
+                "users": ["kim123|12345678|kim123@naver.com|2025-01-18", "admin|12341234|123@gmail.com|"],
+                "books": [
+                    "001|ISBN07", "002|ISBN07", "003|ISBN07", "004|ISBN07",
+                ],
+                "isbn": ["ISBN07|Computer Science|Elon musk|CAT01"],
+                "cats": ["CAT00|uncategorized", "CAT01|computer",],
+                "borrow": [],
+                "borrow_hist": [],
+            },
+        )
+        # 실행 및 입력값 제공
+        output = self.execute_app(
+            app=app, input_values=[
+                "2025-01-14",  # 프로그램 시작 날짜
+                "2",        # 로그인
+                "kim123",    # 아이디
+                "12345678", # 비밀번호
+                "2",        # 대출
+                "003",       # 책 아이디
+                "4",       # 로그아웃
+                "3",        # 종료
+            ])
+        # 결과 검증
+        self.assert_after_prompt(
+            output,
+            expected_output_keywords=[
+                "“Computer Science” 이 대출되었습니다. 반납기한은 2025-01-21입니다."
+            ],
+            file_expect_contains={
+                "borrow": ["003|kim123|2025-01-14|2025-01-21"],
+            }
+        )
 
